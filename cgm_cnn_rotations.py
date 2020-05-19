@@ -91,6 +91,7 @@ def make_one_box(pre_box):
 def rotate_box(pre_box, axis, rot_num):
   dict = {"x":[1, 2], "y":[0, 2], "z":[0, 1]} # lists the axes to be changed if rotated around key
   new_pre_box = []
+  
 
   for ind_set in pre_box:
     a_1, a_2 = dict[axis][0], dict[axis][1]

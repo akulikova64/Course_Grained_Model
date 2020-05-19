@@ -92,19 +92,29 @@ def rotate_box(pre_box, axis, rot_num):
   dict = {"x":[1, 2], "y":[0, 2], "z":[0, 1]} # lists the axes to be changed if rotated around key
   new_pre_box = []
   
-
   for ind_set in pre_box:
     a_1, a_2 = dict[axis][0], dict[axis][1]
     
     if rot_num == 1:
-      ind_set[a_1] = 8 - ind_set[a_2]
-      ind_set[a_2] = ind_set[a_1]
+      ind_1 = ind_set[a_1]
+      ind_2 = ind_set[a_2]
+      
+      ind_set[a_1] = 8 - ind_2
+      ind_set[a_2] = ind_1
+      
     if rot_num == 2:
-      ind_set[a_1] = 8 - ind_set[a_1]
-      ind_set[a_2] = 8 - ind_set[a_2]
+      ind_1 = ind_set[a_1]
+      ind_2 = ind_set[a_2]
+
+      ind_set[a_1] = 8 - ind_1
+      ind_set[a_2] = 8 - ind_2
+      
     if rot_num == 3:
-      ind_set[a_1] = ind_set[a_2]
-      ind_set[a_2] = 8 - ind_set[a_1]
+      ind_1 = ind_set[a_1]
+      ind_2 = ind_set[a_2]
+
+      ind_set[a_1] = ind_2
+      ind_set[a_2] = 8 - ind_1
 
     new_pre_box.append(ind_set)
 

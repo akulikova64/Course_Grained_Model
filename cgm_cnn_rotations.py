@@ -179,12 +179,11 @@ def create_model():
 
   model = multi_gpu_model(model, gpus=4)
 
-  model.compile(loss ='categorical_crossentropy',
-                optimizer = Adam(lr = .001),
-                metrics = ['accuracy'])
+  model.compile(loss ='categorical_crossentropy', optimizer = Adam(lr = .001), metrics = ['accuracy'])
+
   return model
 
-def run_model(model, x_train, y_train, x_val, y_val):
+def train_model(model, x_train, y_train, x_val, y_val):
   batch_size = 20 # batch_size must divide by 4
 
   history = model.fit_generator(
@@ -204,8 +203,8 @@ def get_testing_results(model, x_data_test, y_data_test):
   #score = model.evaluate_generator(x_test, y_test, verbose = 1, steps = int(len(x_test)/batch_size))
   model.save('model.h5')
 
-  print('Test loss:', score[0])
-  print('Test accuracy:', score[1])
+  return score
+  
 
 #graphing the accuracy and loss for both the training and test data
 def get_plots(history):
@@ -227,3 +226,25 @@ def get_plots(history):
   plt.xlabel('epoch')
   plt.legend(['training', 'validaton'], loc = 'upper left')
   plt.savefig("Loss_cgm_flips.pdf")
+
+#---------------------------main----------------------------------------------------
+
+x_train, y_train = get_training_data()
+x_val, y_val = get_validation_data()
+model = create_model()
+history = train_model(model, x_train, y_train, x_val, y_val)
+score = get_testing_results(model, x_data_test, y_data_test)
+
+# results
+print('Test loss:', score[0])
+print('Test accuracy:', score[1])
+get_plots(history)
+
+
+
+
+
+
+
+
+

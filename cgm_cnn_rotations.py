@@ -30,55 +30,6 @@ except ImportError:
   from tensorflow.keras.utils import np_utils
   from tensorflow.keras.utils import to_categorical
   
-
-'''
-# Raghav's class (records loss after each batch (100,000))
-class NBatchLogger(Callback):
-    def __init__(self, display, samples=10000, batch_size=20, nparts=160):
-        super(NBatchLogger, self).__init__()
-        self.step = 0
-        self.display = display
-        self.metric_cache = {}
-        self.epoch = 0
-        self.iteration = 0
-        self.i_per_part = samples/batch_size
-        self.nparts = nparts
-
-    def on_epoch_end(self, epoch, logs=None):
-        self.epoch += 1
-
-    def on_batch_end(self, batch, logs={}):
-        self.step += 1
-        for k in self.params['metrics']:
-            if k in logs:
-                self.metric_cache[k] = self.metric_cache.get(k, 0) + logs[k]
-        if self.step % self.display == 0:
-            metrics_log = ''
-            for (k, v) in self.metric_cache.items():
-                val = v / self.display
-                if abs(val) > 1e-3:
-                    metrics_log += ' - %s: %.4f' % (k, val)
-                else:
-                    metrics_log += ' - %s: %.4e' % (k, val)
-            outline = 'iter: %d, epoch: %d, part: %d, batch: %d, acc: %0.2f, loss: %0.4f, lr: %0.4f' % (self.iteration, self.epoch, (self.iteration / self.i_per_part) % self.nparts, logs['batch'], logs['acc'], logs['loss'], K.eval(self.model.optimizer.lr))
-            log_file = open('log.txt','a')
-            log_file.write(outline+'\n')
-            print(outline)
-            self.metric_cache.clear()
-            self.iteration += 1
-
-# Raghav's class
-class WeightsSaver(Callback):
-    def __init__(self, N):
-        self.N = N
-        self.batch = 1
-
-    def on_batch_end(self, batch, logs={}):
-        if self.batch % self.N == 0:
-            name = 'weights/weights%08d.h5' % (self.batch)
-            self.model.save_weights(name)
-        self.batch += 1
-'''
 # fill a box
 def make_one_box(pre_box):
   box = np.zeros([9, 9, 9, 20]) # 4D array filled with 0
@@ -160,7 +111,7 @@ def get_box_list(path):
   return pre_box_list, center_aa_list
 
 # generator for validation data
-def dataGenerator_1(pre_boxes, center_aa_list, batch_size):
+def test_val_dataGenerator(pre_boxes, center_aa_list, batch_size):
   while True:
       for i in range(0, len(pre_boxes) - batch_size, batch_size):
         box_list = []
@@ -173,7 +124,7 @@ def dataGenerator_1(pre_boxes, center_aa_list, batch_size):
         yield np.asarray(box_list), np_utils.to_categorical(center_list, 20)
 
 # generator for training data
-def dataGenerator_2(pre_boxes, center_aa_list, batch_size):
+def train_dataGenerator(pre_boxes, center_aa_list, batch_size):
   zip_lists = list(zip(pre_boxes, center_aa_list))
   random.shuffle(zip_lists)
   pre_boxes, center_aa_list = list(zip(*zip_lists))
@@ -193,83 +144,86 @@ def dataGenerator_2(pre_boxes, center_aa_list, batch_size):
         yield np.asarray(box_list), np_utils.to_categorical(center_list, 20)
 
 # preparing training data
-x_train, y_train = get_box_list(path = "./boxes/")
+def get_training_data():
+  x_train, y_train = get_box_list(path = "./boxes/")
+  return x_train, y_train
 
 # preparing validation data
-x_val, y_val = get_box_list(path = "./boxes_38/")
+def get_validation_data():
+  x_val, y_val = get_box_list(path = "./boxes_38/")
+  return x_val, y_val
 
 # preparing testing data
-x_test = np.load("./testing/boxes_test.npy", allow_pickle = True)
-y_test = np.load("./testing/centers_test.npy", allow_pickle = True)
+def get_test_Data():
+  x_test = np.load("./testing/boxes_test.npy", allow_pickle = True)
+  y_test = np.load("./testing/centers_test.npy", allow_pickle = True)
 
-y_data_test = np_utils.to_categorical(y_test, 20)
-x_data_test = []
+  y_data_test = np_utils.to_categorical(y_test, 20)
+  x_data_test = []
 
-for index_set  in x_test:
-  box = make_one_box(index_set)
-  x_data_test.append(box)
-x_data_test = np.asarray(x_data_test)
-
+  for index_set  in x_test:
+    box = make_one_box(index_set)
+    x_data_test.append(box)
+  x_data_test = np.asarray(x_data_test)
+  return 
 
 # cnn model
-model = Sequential()
-model.add(Convolution3D(32, kernel_size = (3, 3, 3), strides = (1, 1, 1), activation = 'relu', input_shape = (9, 9, 9, 20))) # 32 output nodes, kernel_size is your moving window, activation function, input shape = auto calculated
-model.add(Convolution3D(32, (3, 3, 3), activation = 'relu'))
-model.add(Convolution3D(32, (3, 3, 3), activation = 'relu'))
-model.add(Flatten()) # now our layers have been combined to one
-model.add(Dense(500, activation = 'relu')) # 500 nodes in the last hidden layer
-model.add(Dense(20, activation = 'softmax')) # output layer has 20 possible classes (amino acids 0 - 19)
+def create_model():
+  model = Sequential()
+  model.add(Convolution3D(32, kernel_size = (3, 3, 3), strides = (1, 1, 1), activation = 'relu', input_shape = (9, 9, 9, 20))) # 32 output nodes, kernel_size is your moving window, activation function, input shape = auto calculated
+  model.add(Convolution3D(32, (3, 3, 3), activation = 'relu'))
+  model.add(Convolution3D(32, (3, 3, 3), activation = 'relu'))
+  model.add(Flatten()) # now our layers have been combined to one
+  model.add(Dense(500, activation = 'relu')) # 500 nodes in the last hidden layer
+  model.add(Dense(20, activation = 'softmax')) # output layer has 20 possible classes (amino acids 0 - 19)
 
-model = multi_gpu_model(model, gpus=4)
+  model = multi_gpu_model(model, gpus=4)
 
-'''
-model.compile(loss ='categorical_crossentropy',
-              optimizer = Adam(lr = .001),
-              metrics = ['accuracy'],
-              callbacks=[WeightsSaver(10000), NBatchLogger(1)])'''
+  model.compile(loss ='categorical_crossentropy',
+                optimizer = Adam(lr = .001),
+                metrics = ['accuracy'])
+  return model
 
-model.compile(loss ='categorical_crossentropy',
-              optimizer = Adam(lr = .001),
-              metrics = ['accuracy'])
+def run_model(model, x_train, y_train, x_val, y_val):
+  batch_size = 20 # batch_size must divide by 4
 
-# batch_size must divide by 4
-batch_size = 20
+  history = model.fit_generator(
+            generator = train_dataGenerator(x_train, y_train, batch_size),
+            # change to x_val and y_val data (not seen before)
+            validation_data = test_val_dataGenerator(x_val, y_val, batch_size),
+            validation_steps = 20,
+            steps_per_epoch = len(x_train)/batch_size, 
+            epochs = 1, 
+            verbose = 1,
+          )
 
-history = model.fit_generator(
-          generator = dataGenerator_2(x_train, y_train, batch_size),
-          # change to x_val and y_val data (not seen before)
-          validation_data = dataGenerator_1(x_val, y_val, batch_size),
-          validation_steps = 20,
-          steps_per_epoch = len(x_train)/batch_size, 
-          epochs = 1, 
-          verbose = 1,
-         )
+  return history
 
-score = model.evaluate(x_data_test, y_data_test, verbose = 1, steps = int(len(x_data_test)/batch_size))  
-#score = model.evaluate_generator(x_test, y_test, verbose = 1, steps = int(len(x_test)/batch_size))
-model.save('model.h5')
+def get_testing_results(model, x_data_test, y_data_test):
+  score = model.evaluate(x_data_test, y_data_test, verbose = 1, steps = int(len(x_data_test)/batch_size))  
+  #score = model.evaluate_generator(x_test, y_test, verbose = 1, steps = int(len(x_test)/batch_size))
+  model.save('model.h5')
 
-print('Test loss:', score[0])
-print('Test accuracy:', score[1])
+  print('Test loss:', score[0])
+  print('Test accuracy:', score[1])
 
 #graphing the accuracy and loss for both the training and test data
-#summarize history for accuracy 
+def get_plots(history):
+  #summarize history for accuracy 
+  plt.plot(history.history['accuracy'])
+  plt.plot(history.history['val_accuracy'])
+  plt.title('model accuracy')
+  plt.ylabel('accuracy')
+  plt.xlabel('epoch')
+  plt.legend(['training', 'validation'], loc = 'upper left')
+  plt.savefig("Accuracy_cgm_flips.pdf")
+  plt.clf()
 
-# change to CSV file
-plt.plot(history.history['accuracy'])
-plt.plot(history.history['val_accuracy'])
-plt.title('model accuracy')
-plt.ylabel('accuracy')
-plt.xlabel('epoch')
-plt.legend(['training', 'validation'], loc = 'upper left')
-plt.savefig("Accuracy_cgm_flips.pdf")
-plt.clf()
-
-# summarize history for loss
-plt.plot(history.history['loss'])
-plt.plot(history.history['val_loss'])
-plt.title('model loss')
-plt.ylabel('loss')
-plt.xlabel('epoch')
-plt.legend(['training', 'validaton'], loc = 'upper left')
-plt.savefig("Loss_cgm_flips.pdf")
+  # summarize history for loss
+  plt.plot(history.history['loss'])
+  plt.plot(history.history['val_loss'])
+  plt.title('model loss')
+  plt.ylabel('loss')
+  plt.xlabel('epoch')
+  plt.legend(['training', 'validaton'], loc = 'upper left')
+  plt.savefig("Loss_cgm_flips.pdf")

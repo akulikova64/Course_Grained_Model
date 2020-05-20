@@ -6,7 +6,6 @@ import os
 import sys
 import random
 
-
 try:
   import keras
   from keras.models import Sequential
@@ -17,6 +16,7 @@ try:
   from keras.models import load_model
   from keras.utils import multi_gpu_model
   from keras.utils import np_utils
+  from keras.utils import to_categorical
 
 except ImportError:
   import tensorflow
@@ -39,6 +39,7 @@ def make_one_box(pre_box):
 
   return box
 
+# returns list of condensed boxes
 def get_box_list(path): 
   fileList = os.listdir(path)
   pre_box_list = []
@@ -137,8 +138,8 @@ def train_model(model, batch_size, epochs, rotations, x_train, y_train, x_val, y
   return history
 
 # returns testing results
-def get_testing_results(model, batch_size, x_data_test, y_data_test):
-  score = model.evaluate(x_data_test, y_data_test, verbose = 1, steps = int(len(x_data_test)/batch_size))  
+def get_testing_results(model, batch_size, x_test, y_test):
+  score = model.evaluate(x_test, y_test, verbose = 1, steps = int(len(x_test)/batch_size))  
   #score = model.evaluate_generator(x_test, y_test, verbose = 1, steps = int(len(x_test)/batch_size))
   model.save('model.h5')
 
@@ -184,8 +185,8 @@ model = create_model()
 history = train_model(model, BATCH_SIZE, EPOCHS, ROTATIONS, x_train, y_train, x_val, y_val)
 
 # testing
-x_test, y_test = get_test_data(model, BATCH_SIZE, testing_path_x, testing_path_y)
-score = get_testing_results(model, x_test, y_test)
+x_test, y_test = get_test_data(testing_path_x, testing_path_y)
+score = get_testing_results(model, BATCH_SIZE, x_test, y_test)
 
 # results
 get_plots(history)

@@ -1,11 +1,11 @@
 # course grained cnn on 38 proteins (small practice dataset)
-
+from rotations import rotation_combo
+from matplotlib import pyplot as plt
 import numpy as np
 import os
 import sys
-import math
 import random
-from matplotlib import pyplot as plt
+
 
 try:
   import keras
@@ -36,61 +36,6 @@ def make_one_box(pre_box):
   for ind_set in pre_box:
     box[ind_set[0]][ind_set[1]][ind_set[2]][ind_set[3]] += 1
   return box
-
-# axis is the axis across which the rotation occurs
-# rot_num is the number of 90 degree rotations needed (1, 2 or 3)
-def rotate_box(pre_box, axis, rot_num):
-  dict = {"x":[1, 2], "y":[0, 2], "z":[0, 1]} # lists the axes to be changed if rotated around key
-  new_pre_box = []
-  
-  for ind_set in pre_box:
-    a_1, a_2 = dict[axis][0], dict[axis][1]
-    
-    if rot_num == 1:
-      ind_1 = ind_set[a_1]
-      ind_2 = ind_set[a_2]
-      
-      ind_set[a_1] = 8 - ind_2
-      ind_set[a_2] = ind_1
-      
-    if rot_num == 2:
-      ind_1 = ind_set[a_1]
-      ind_2 = ind_set[a_2]
-
-      ind_set[a_1] = 8 - ind_1
-      ind_set[a_2] = 8 - ind_2
-      
-    if rot_num == 3:
-      ind_1 = ind_set[a_1]
-      ind_2 = ind_set[a_2]
-
-      ind_set[a_1] = ind_2
-      ind_set[a_2] = 8 - ind_1
-
-    new_pre_box.append(ind_set)
-
-  return new_pre_box
-
-# chooses one of 24 conformations
-def rotation_combo(pre_box):
-  final_preboxes = []
-  rot_list = random.sample(range(0, 24), 4)
-
-  for i in rot_list:
-    # rotate along z
-    prebox_1 = rotate_box(pre_box, "z", i%4)
-
-    # rotate along x or y
-    rot_num = math.floor(i/4) # 0-5
-    if rot_num < 4:
-      prebox_2 = rotate_box(prebox_1, "y", rot_num)
-    elif rot_num == 4:
-      prebox_2 = rotate_box(prebox_1, "x", 1)
-    elif rot_num == 5:
-      prebox_2 = rotate_box(prebox_1, "x", 3)
-    final_preboxes.append(prebox_2)
-
-  return final_preboxes
 
 def get_box_list(path): 
   fileList = os.listdir(path)
@@ -136,7 +81,7 @@ def train_dataGenerator(pre_boxes, center_aa_list, batch_size):
         box_list = []
         center_list = []
         for j in range(i, i + quarter_batch): 
-          rotated_boxes = rotation_combo(pre_boxes[j])
+          rotated_boxes = rotations.rotation_combo(pre_boxes[j])
           for rotated_box in rotated_boxes:
             box_list.append(make_one_box(rotated_box))
           for z in range(0, 4):

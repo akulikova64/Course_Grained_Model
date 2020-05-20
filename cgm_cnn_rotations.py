@@ -71,6 +71,7 @@ def rotate_box(pre_box, axis, rot_num):
 
   return new_pre_box
 
+# chooses one of 24 conformations
 def rotation_combo(pre_box):
   final_preboxes = []
   rot_list = random.sample(range(0, 24), 4)
@@ -154,20 +155,21 @@ def get_validation_data():
   return x_val, y_val
 
 # preparing testing data
-def get_test_Data():
-  x_test = np.load("./testing/boxes_test.npy", allow_pickle = True)
-  y_test = np.load("./testing/centers_test.npy", allow_pickle = True)
-
-  y_data_test = np_utils.to_categorical(y_test, 20)
-  x_data_test = []
-
-  for index_set  in x_test:
+def get_test_data():
+  x_data_test = np.load("./testing/boxes_test.npy", allow_pickle = True)
+  y_data_test = np.load("./testing/centers_test.npy", allow_pickle = True)
+  
+  x_test = []
+  for index_set  in x_data_test:
     box = make_one_box(index_set)
-    x_data_test.append(box)
-  x_data_test = np.asarray(x_data_test)
-  return 
+    x_test.append(box)
 
-# cnn model
+  x_test = np.asarray(x_data_test)
+  y_test = np_utils.to_categorical(y_test, 20)
+
+  return x_test, y_test
+
+# cnn model structure
 def create_model():
   model = Sequential()
   model.add(Convolution3D(32, kernel_size = (3, 3, 3), strides = (1, 1, 1), activation = 'relu', input_shape = (9, 9, 9, 20))) # 32 output nodes, kernel_size is your moving window, activation function, input shape = auto calculated
@@ -183,6 +185,7 @@ def create_model():
 
   return model
 
+# training the model
 def train_model(model, x_train, y_train, x_val, y_val):
   batch_size = 20 # batch_size must divide by 4
 
@@ -198,6 +201,7 @@ def train_model(model, x_train, y_train, x_val, y_val):
 
   return history
 
+# returns testing results
 def get_testing_results(model, x_data_test, y_data_test):
   score = model.evaluate(x_data_test, y_data_test, verbose = 1, steps = int(len(x_data_test)/batch_size))  
   #score = model.evaluate_generator(x_test, y_test, verbose = 1, steps = int(len(x_test)/batch_size))
@@ -205,7 +209,6 @@ def get_testing_results(model, x_data_test, y_data_test):
 
   return score
   
-
 #graphing the accuracy and loss for both the training and test data
 def get_plots(history):
   #summarize history for accuracy 
@@ -229,17 +232,20 @@ def get_plots(history):
 
 #---------------------------main----------------------------------------------------
 
+# training
 x_train, y_train = get_training_data()
 x_val, y_val = get_validation_data()
 model = create_model()
 history = train_model(model, x_train, y_train, x_val, y_val)
-score = get_testing_results(model, x_data_test, y_data_test)
+
+# testing
+x_test, y_test = get_test_data()
+score = get_testing_results(model, x_test, y_test)
 
 # results
+get_plots(history)
 print('Test loss:', score[0])
 print('Test accuracy:', score[1])
-get_plots(history)
-
 
 
 

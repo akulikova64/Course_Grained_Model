@@ -33,8 +33,10 @@ except ImportError:
 # fill a box
 def make_one_box(pre_box):
   box = np.zeros([9, 9, 9, 20]) # 4D array filled with 0
+
   for ind_set in pre_box:
     box[ind_set[0]][ind_set[1]][ind_set[2]][ind_set[3]] += 1
+
   return box
 
 def get_box_list(path): 
@@ -70,47 +72,37 @@ def test_val_dataGenerator(pre_boxes, center_aa_list, batch_size):
         yield np.asarray(box_list), np_utils.to_categorical(center_list, 20)
 
 # generator for training data
-def train_dataGenerator(pre_boxes, center_aa_list, batch_size):
+def train_dataGenerator(pre_boxes, center_aa_list, batch_size, rotations):
   zip_lists = list(zip(pre_boxes, center_aa_list))
   random.shuffle(zip_lists)
   pre_boxes, center_aa_list = list(zip(*zip_lists))
 
   while True:
-      quarter_batch = int(batch_size/4)
-      for i in range(0, len(pre_boxes) - quarter_batch, quarter_batch):
+      batch_fraction = int(batch_size/rotations)
+      for i in range(0, len(pre_boxes) - batch_fraction, batch_fraction):
         box_list = []
         center_list = []
-        for j in range(i, i + quarter_batch): 
-          rotated_boxes = rotations.rotation_combo(pre_boxes[j])
+        for j in range(i, i + batch_fraction): 
+          rotated_boxes = rotation_combo(pre_boxes[j])
           for rotated_box in rotated_boxes:
             box_list.append(make_one_box(rotated_box))
-          for z in range(0, 4):
+          for z in range(0, rotations):
             center_list.append(center_aa_list[j])
 
         yield np.asarray(box_list), np_utils.to_categorical(center_list, 20)
 
-# preparing training data
-def get_training_data():
-  x_train, y_train = get_box_list(path = "./boxes/")
-  return x_train, y_train
-
-# preparing validation data
-def get_validation_data():
-  x_val, y_val = get_box_list(path = "./boxes_38/")
-  return x_val, y_val
-
 # preparing testing data
-def get_test_data():
-  x_data_test = np.load("./testing/boxes_test.npy", allow_pickle = True)
-  y_data_test = np.load("./testing/centers_test.npy", allow_pickle = True)
+def get_test_data(path_x, path_y):
+  x_data_test = np.load(path_x, allow_pickle = True)
+  y_data_test = np.load(path_y, allow_pickle = True)
   
   x_test = []
   for index_set  in x_data_test:
     box = make_one_box(index_set)
     x_test.append(box)
 
-  x_test = np.asarray(x_data_test)
-  y_test = np_utils.to_categorical(y_test, 20)
+  x_test = np.asarray(x_test)
+  y_test = np_utils.to_categorical(y_data_test, 20)
 
   return x_test, y_test
 
@@ -131,23 +123,21 @@ def create_model():
   return model
 
 # training the model
-def train_model(model, x_train, y_train, x_val, y_val):
-  batch_size = 20 # batch_size must divide by 4
+def train_model(model, batch_size, epochs, rotations, x_train, y_train, x_val, y_val):
 
   history = model.fit_generator(
-            generator = train_dataGenerator(x_train, y_train, batch_size),
-            # change to x_val and y_val data (not seen before)
+            generator = train_dataGenerator(x_train, y_train, batch_size, rotations),
             validation_data = test_val_dataGenerator(x_val, y_val, batch_size),
             validation_steps = 20,
             steps_per_epoch = len(x_train)/batch_size, 
-            epochs = 1, 
+            epochs = epochs, 
             verbose = 1,
           )
 
   return history
 
 # returns testing results
-def get_testing_results(model, x_data_test, y_data_test):
+def get_testing_results(model, batch_size, x_data_test, y_data_test):
   score = model.evaluate(x_data_test, y_data_test, verbose = 1, steps = int(len(x_data_test)/batch_size))  
   #score = model.evaluate_generator(x_test, y_test, verbose = 1, steps = int(len(x_test)/batch_size))
   model.save('model.h5')
@@ -176,15 +166,25 @@ def get_plots(history):
   plt.savefig("Loss_cgm_flips.pdf")
 
 #---------------------------main----------------------------------------------------
+# variables
+EPOCHS = 1 # iterations through the data
+ROTATIONS = 4 # number of box rotations
+BATCH_SIZE = 20 # batch_size must be divisible by "ROTATIONS"
 
-# training
-x_train, y_train = get_training_data()
-x_val, y_val = get_validation_data()
+# data paths
+training_path = "./boxes/"
+validation_path = "./boxes_38/"
+testing_path_x = "./testing/boxes_test.npy"
+testing_path_y = "./testing/centers_test.npy"
+
+# training and validation
+x_train, y_train = get_box_list(training_path) # preparing training data (boxes, centers)
+x_val, y_val = get_box_list(validation_path) # preparing validation data (boxes, centers)
 model = create_model()
-history = train_model(model, x_train, y_train, x_val, y_val)
+history = train_model(model, BATCH_SIZE, EPOCHS, ROTATIONS, x_train, y_train, x_val, y_val)
 
 # testing
-x_test, y_test = get_test_data()
+x_test, y_test = get_test_data(model, BATCH_SIZE, testing_path_x, testing_path_y)
 score = get_testing_results(model, x_test, y_test)
 
 # results

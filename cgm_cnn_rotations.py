@@ -84,7 +84,7 @@ def train_dataGenerator(pre_boxes, center_aa_list, batch_size, rotations):
         box_list = []
         center_list = []
         for j in range(i, i + batch_fraction): 
-          rotated_boxes = rotation_combo(pre_boxes[j])
+          rotated_boxes = rotation_combo(pre_boxes[j], rotations)
           for rotated_box in rotated_boxes:
             box_list.append(make_one_box(rotated_box))
           for z in range(0, rotations):

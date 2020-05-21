@@ -12,7 +12,7 @@ def rotate_box(pre_box, axis, rot_num):
     a_1, a_2 = dict[axis][0], dict[axis][1]
     ind_1, ind_2 = ind_set[a_1], ind_set[a_2]
     new_set = ind_set.copy()
-    a_3 = 3 - (a_1 + a_2)
+  
     if rot_num == 1:
       new_set[a_1] = 8 - ind_2
       new_set[a_2] = ind_1

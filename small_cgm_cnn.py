@@ -1,17 +1,34 @@
 # course grained cnn on 38 proteins (small practice dataset)
+from rotations import rotation_combo
+from matplotlib import pyplot as plt
 import numpy as np
 import os
 import sys
 import random
-import keras
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Activation, Flatten
-from keras.layers import Convolution3D
-from keras.optimizers import Adam
-from keras.models import load_model
-from keras.utils import multi_gpu_model
-from keras.utils import np_utils
-from matplotlib import pyplot as plt
+
+try:
+  import keras
+  from keras.models import Sequential
+  from keras.layers import Dense, Dropout, Activation, Flatten
+  from keras.layers import Convolution3D
+  from keras.optimizers import Adam
+  from keras.callbacks import Callback
+  from keras.models import load_model
+  from keras.utils import multi_gpu_model
+  from keras.utils import np_utils
+  from keras.utils import to_categorical
+
+except ImportError:
+  import tensorflow
+  from tensorflow.keras.models import Sequential
+  from tensorflow.keras.layers import Dense, Dropout, Activation, Flatten
+  from tensorflow.keras.layers import Convolution3D
+  from tensorflow.keras.callbacks import Callback
+  from tensorflow.keras.optimizers import Adam
+  from tensorflow.keras.models import load_model
+  from tensorflow.keras.utils import multi_gpu_model
+  from tensorflow.keras.utils import np_utils
+  from tensorflow.keras.utils import to_categorical
 
 # fill a box
 def make_one_box(pre_box):

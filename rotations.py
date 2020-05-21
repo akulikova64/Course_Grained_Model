@@ -28,7 +28,7 @@ def rotate_box(pre_box, axis, rot_num):
 
   return new_pre_box
 
-def mutiple_rotations(i, pre_box):
+def multiple_rotations(i, pre_box):
   prebox_1 = rotate_box(pre_box, "z", i%4)
 
   # rotate along x or y
@@ -48,7 +48,7 @@ def rotation_combo(pre_box, rotations):
   rot_list = random.sample(range(0, 24), rotations)
 
   for i in rot_list:
-    rotated_prebox = mutiple_rotations(i, pre_box)
+    rotated_prebox = multiple_rotations(i, pre_box)
     final_preboxes.append(rotated_prebox)
 
   return final_preboxes

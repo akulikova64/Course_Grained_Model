@@ -4,7 +4,7 @@ import os
 sys.path.append(os.path.abspath(".."))
 from rotations import multiple_rotations
 # testing the rotation functions in rotations.py 
-
+'''
 def get_box_list(): 
   path = "../boxes_38/"
   fileList = os.listdir(path)
@@ -18,19 +18,32 @@ def get_box_list():
       for pre_box in pre_boxes:
         pre_box_list.append(pre_box)
   
-  return pre_box_list
+  return pre_box_list'''
 
+
+def test_z_rotations():
+  box_size = 2
+  pre_box = [[0, 1, 0, 15]] 
+  
+
+  assert multiple_rotations(0, pre_box, box_size) == [[0, 1, 0, 15]]
+  assert multiple_rotations(1, pre_box, box_size) == [[0, 0, 0, 15]]
+  assert multiple_rotations(2, pre_box, box_size) == [[1, 0, 0, 15]]
+  assert multiple_rotations(3, pre_box, box_size) == [[1, 1, 0, 15]]
+
+'''
 # tests full rotation along z axis
 def test_z_rotation():
   box_list = get_box_list()
-  orig_box = np.asarray(box_list[5][0:5]) # any box will do
+  #orig_box = np.asarray(box_list[5][0:5]) # any box will do
+  orig_box = [[2, 4, 6, 20]]
 
   r1 = multiple_rotations(1, orig_box)
   r2 = np.asarray(multiple_rotations(3, r1))
 
   comparison = orig_box == r2
   equal_arrays = comparison.all()
- 
+  
   assert equal_arrays
 
 # tests full rotation along z axis, should not pass test
@@ -72,4 +85,4 @@ def test_two_rotations_2():
   comparison = np.asarray(r1) == np.asarray(r2)
   equal_arrays = comparison.all()
 
-  assert equal_arrays
+  assert equal_arrays'''

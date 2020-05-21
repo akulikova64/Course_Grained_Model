@@ -4,7 +4,8 @@ import random
 
 # axis is the axis across which the rotation occurs
 # rot_num is the number of 90 degree rotations needed (0, 1, 2 or 3)
-def rotate_box(pre_box, axis, rot_num):
+def rotate_box(pre_box, axis, rot_num = 4, box_size = 9): #box size is the number of bins
+  box_size -= 1 # with 9 bins, indices are 0-8
   dict = {"x":[1, 2], "y":[0, 2], "z":[0, 1]} # lists the axes to be changed if rotated around key
   new_pre_box = []
   
@@ -14,33 +15,33 @@ def rotate_box(pre_box, axis, rot_num):
     new_set = ind_set.copy()
   
     if rot_num == 1:
-      new_set[a_1] = 8 - ind_2
+      new_set[a_1] = box_size - ind_2
       new_set[a_2] = ind_1
     
     if rot_num == 2:
-      new_set[a_1] = 8 - ind_1
-      new_set[a_2] = 8 - ind_2
+      new_set[a_1] = box_size - ind_1
+      new_set[a_2] = box_size - ind_2
       
     if rot_num == 3:
       new_set[a_1] = ind_2
-      new_set[a_2] = 8 - ind_1
+      new_set[a_2] = box_size - ind_1
 
     new_pre_box.append(new_set)
     
 
   return new_pre_box
 
-def multiple_rotations(i, pre_box):
+def multiple_rotations(i, pre_box, box_size = 9):
   prebox_1 = rotate_box(pre_box, "z", i%4)
 
   # rotate along x or y
   rot_num = math.floor(i/4) # 0-5
   if rot_num < 4:
-    prebox_2 = rotate_box(prebox_1, "y", rot_num)
+    prebox_2 = rotate_box(prebox_1, "y", rot_num, box_size)
   elif rot_num == 4:
-    prebox_2 = rotate_box(prebox_1, "x", 1)
+    prebox_2 = rotate_box(prebox_1, "x", 1, box_size)
   elif rot_num == 5:
-    prebox_2 = rotate_box(prebox_1, "x", 3)
+    prebox_2 = rotate_box(prebox_1, "x", 3, box_size)
 
   return prebox_2
 

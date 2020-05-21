@@ -32,7 +32,7 @@ def rotate_box(pre_box, axis, rot_num = 4, box_size = 9): #box size is the numbe
   return new_pre_box
 
 def multiple_rotations(i, pre_box, box_size = 9):
-  prebox_1 = rotate_box(pre_box, "z", i%4)
+  prebox_1 = rotate_box(pre_box, "z", i%4, box_size)
 
   # rotate along x or y
   rot_num = math.floor(i/4) # 0-5

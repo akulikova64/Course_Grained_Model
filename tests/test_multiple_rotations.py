@@ -4,85 +4,69 @@ import os
 sys.path.append(os.path.abspath(".."))
 from rotations import multiple_rotations
 # testing the rotation functions in rotations.py 
-'''
-def get_box_list(): 
-  path = "../boxes_38/"
-  fileList = os.listdir(path)
-  pre_box_list = []
-
-  for file in fileList:
-    if "boxes" in file:
-      pdb_id = file[-8:-4]
-
-      pre_boxes = np.load(path + file, allow_pickle = True)
-      for pre_box in pre_boxes:
-        pre_box_list.append(pre_box)
-  
-  return pre_box_list'''
-
 
 def test_z_rotations():
   box_size = 2
   pre_box = [[0, 1, 0, 15]] 
-  
 
+  # when i = 0, 1, 2 and 3, rotations are arround z-axis
   assert multiple_rotations(0, pre_box, box_size) == [[0, 1, 0, 15]]
   assert multiple_rotations(1, pre_box, box_size) == [[0, 0, 0, 15]]
   assert multiple_rotations(2, pre_box, box_size) == [[1, 0, 0, 15]]
   assert multiple_rotations(3, pre_box, box_size) == [[1, 1, 0, 15]]
 
-'''
-# tests full rotation along z axis
-def test_z_rotation():
-  box_list = get_box_list()
-  #orig_box = np.asarray(box_list[5][0:5]) # any box will do
-  orig_box = [[2, 4, 6, 20]]
+def test_y_rotations():
+  box_size = 2
+  pre_box = [[0, 1, 0, 15]]
 
-  r1 = multiple_rotations(1, orig_box)
-  r2 = np.asarray(multiple_rotations(3, r1))
+  assert multiple_rotations(4, pre_box, box_size) == [[1, 1, 0, 15]]
+  assert multiple_rotations(8, pre_box, box_size) == [[1, 1, 1, 15]]
+  assert multiple_rotations(12, pre_box, box_size) == [[0, 1, 1, 15]]
 
-  comparison = orig_box == r2
-  equal_arrays = comparison.all()
-  
-  assert equal_arrays
+def test_x_rotations():
+  box_size = 2
+  pre_box = [[0, 1, 0, 15]]
 
-# tests full rotation along z axis, should not pass test
-def test_z_rotation_wrong():
-  box_list = get_box_list()
-  orig_box = np.asarray(box_list[5][0:5]) # any box will do
+  assert multiple_rotations(16, pre_box, box_size) == [[0, 1, 1, 15]]
+  assert multiple_rotations(20, pre_box, box_size) == [[0, 0, 0, 15]]
 
-  r1 = multiple_rotations(1, orig_box)
-  r2 = np.asarray(multiple_rotations(2, r1))
+def test_rotation_combo_1():
+  box_size = 2
+  pre_box = [[0, 1, 0, 15]]
 
-  comparison = orig_box == r2
-  equal_arrays = comparison.all()
+  # rotations: 1x, 1z, 2y, 3z, 1x
+  r1 = multiple_rotations(16, pre_box, box_size)
+  r2 = multiple_rotations(1, r1, box_size)
+  r3 = multiple_rotations(8, r2, box_size)
+  r4 = multiple_rotations(3, r3, box_size)
+  r5 = multiple_rotations(16, r4, box_size)
+
+  assert r5 == pre_box
+
+  # should not be equal
+  r1 = multiple_rotations(16, pre_box, box_size)
+  r2 = multiple_rotations(2, r1, box_size)
+  r3 = multiple_rotations(8, r2, box_size)
+  r4 = multiple_rotations(3, r3, box_size)
+  r5 = multiple_rotations(16, r4, box_size)
+
+  assert r5 != pre_box
+
+# compares 1y rotation to 1z, 1x then 3z
+def test_rotation_combo_2(): 
+  box_size = 2
+  pre_box = [[0, 1, 0, 15]]
+
+  r1 = multiple_rotations(4, pre_box, box_size)
+  r2 = multiple_rotations(17, pre_box, box_size)
+  r2 = multiple_rotations(3, r2, box_size)
  
-  assert not equal_arrays
+  assert r1 == r2
 
-# compares 1 y rot to 1z,1x then 3z
-def test_two_rotations():
-  box_list = get_box_list()
-  orig_box = np.asarray(box_list[8][0:5]) # any box will do
+  # should not be equal
+  r1 = multiple_rotations(4, pre_box, box_size)
+  r2 = multiple_rotations(16, pre_box, box_size)
+  r2 = multiple_rotations(2, r2, box_size)
 
-  r1 = multiple_rotations(4, orig_box)
-  r2 = multiple_rotations(17, orig_box) # 1 rot by z, 1 rot by x
-  r2 = multiple_rotations(3, r2)
+  assert r1 != r2
 
-  comparison = np.asarray(r1) == np.asarray(r2)
-  equal_arrays = comparison.all()
-
-  assert equal_arrays
-
-# compares 1x to 1y, 1x, 1z
-def test_two_rotations_2():
-  box_list = get_box_list()
-  orig_box = np.asarray(box_list[8][0:5]) # any box will do
-
-  r1 = multiple_rotations(16, orig_box) # 1x
-  r2 = multiple_rotations(4, orig_box) # 1 rot by z, 1 rot by x
-  r2 = multiple_rotations(17, r2)
-
-  comparison = np.asarray(r1) == np.asarray(r2)
-  equal_arrays = comparison.all()
-
-  assert equal_arrays'''

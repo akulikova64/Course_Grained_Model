@@ -61,7 +61,7 @@ def test_two_rotations():
   assert equal_arrays
 
 # compares 1x to 1y, 1x, 1z
-def test_two_rotations():
+def test_two_rotations_2():
   box_list = get_box_list()
   orig_box = np.asarray(box_list[8][0:5]) # any box will do
 

@@ -31,27 +31,27 @@ def rotate_box(pre_box, axis, rot_num = 4, box_size = 9): #box size is the numbe
 
   return new_pre_box
 
-def multiple_rotations(i, pre_box, box_size = 9):
-  prebox_1 = rotate_box(pre_box, "z", i%4, box_size)
+def multiple_rotations(i, pre_box, box_size = 9): # i is a value from 0-23 (encodes the 24 possible rotations)
+  prebox_1 = rotate_box(pre_box, "z", i%4, box_size) # remainder conveniently assignes i to one of 4 z-axis rotations.
 
   # rotate along x or y
-  rot_num = math.floor(i/4) # 0-5
+  rot_num = math.floor(i/4) # 0-5 (gives one of 6 remaining rotation possibilities)
   if rot_num < 4:
-    prebox_2 = rotate_box(prebox_1, "y", rot_num, box_size)
-  elif rot_num == 4:
-    prebox_2 = rotate_box(prebox_1, "x", 1, box_size)
+    prebox_2 = rotate_box(prebox_1, "y", rot_num, box_size) # 3 possible rotations around y
+  elif rot_num == 4: 
+    prebox_2 = rotate_box(prebox_1, "x", 1, box_size) # get one of the remaining two conformations by rotating around x
   elif rot_num == 5:
     prebox_2 = rotate_box(prebox_1, "x", 3, box_size)
 
   return prebox_2
 
 # chooses one of 24 conformations
-def rotation_combo(pre_box, rotations):
+def rotation_combo(pre_box, rotations, box_size = 9):
   final_preboxes = []
-  rot_list = random.sample(range(0, 24), rotations)
+  rot_list = random.sample(range(0, 24), rotations) # get random cube conformations "rotations" number of times.
 
   for i in rot_list:
-    rotated_prebox = multiple_rotations(i, pre_box)
+    rotated_prebox = multiple_rotations(i, pre_box, box_size)
     final_preboxes.append(rotated_prebox)
 
   return final_preboxes

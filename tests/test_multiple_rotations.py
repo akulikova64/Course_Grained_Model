@@ -52,11 +52,11 @@ def test_rotation_combo_1():
 
   assert r5 != pre_box
 
-# compares 1y rotation to 1z, 1x then 3z
 def test_rotation_combo_2(): 
   box_size = 2
   pre_box = [[0, 1, 0, 15]]
 
+  # rotations: 1y compared to 1z, 1x, 3z
   r1 = multiple_rotations(4, pre_box, box_size)
   r2 = multiple_rotations(17, pre_box, box_size)
   r2 = multiple_rotations(3, r2, box_size)

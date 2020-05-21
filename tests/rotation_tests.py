@@ -46,7 +46,7 @@ def test_z_rotation_wrong():
  
   assert not equal_arrays
 
-
+# compares 1 y rot to 1z,1x then 3z
 def test_two_rotations():
   box_list = get_box_list()
   orig_box = np.asarray(box_list[8][0:5]) # any box will do
@@ -54,6 +54,20 @@ def test_two_rotations():
   r1 = multiple_rotations(4, orig_box)
   r2 = multiple_rotations(17, orig_box) # 1 rot by z, 1 rot by x
   r2 = multiple_rotations(3, r2)
+
+  comparison = np.asarray(r1) == np.asarray(r2)
+  equal_arrays = comparison.all()
+
+  assert equal_arrays
+
+# compares 1x to 1y, 1x, 1z
+def test_two_rotations():
+  box_list = get_box_list()
+  orig_box = np.asarray(box_list[8][0:5]) # any box will do
+
+  r1 = multiple_rotations(16, orig_box) # 1x
+  r2 = multiple_rotations(4, orig_box) # 1 rot by z, 1 rot by x
+  r2 = multiple_rotations(17, r2)
 
   comparison = np.asarray(r1) == np.asarray(r2)
   equal_arrays = comparison.all()

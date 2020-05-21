@@ -1,2 +1,5 @@
 /boxes_38
 /testing
+/__pycache__
+/tests/__pycache__
+/tests/pytest_cache

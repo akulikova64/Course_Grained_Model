@@ -3,7 +3,7 @@ import math
 import random
 
 # axis is the axis across which the rotation occurs
-# rot_num is the number of 90 degree rotations needed (1, 2 or 3)
+# rot_num is the number of 90 degree rotations needed (0, 1, 2 or 3)
 def rotate_box(pre_box, axis, rot_num):
   dict = {"x":[1, 2], "y":[0, 2], "z":[0, 1]} # lists the axes to be changed if rotated around key
   new_pre_box = []
@@ -11,20 +11,22 @@ def rotate_box(pre_box, axis, rot_num):
   for ind_set in pre_box:
     a_1, a_2 = dict[axis][0], dict[axis][1]
     ind_1, ind_2 = ind_set[a_1], ind_set[a_2]
-
+    new_set = ind_set.copy()
+    a_3 = 3 - (a_1 + a_2)
     if rot_num == 1:
-      ind_set[a_1] = 8 - ind_2
-      ind_set[a_2] = ind_1
-      
+      new_set[a_1] = 8 - ind_2
+      new_set[a_2] = ind_1
+    
     if rot_num == 2:
-      ind_set[a_1] = 8 - ind_1
-      ind_set[a_2] = 8 - ind_2
+      new_set[a_1] = 8 - ind_1
+      new_set[a_2] = 8 - ind_2
       
     if rot_num == 3:
-      ind_set[a_1] = ind_2
-      ind_set[a_2] = 8 - ind_1
+      new_set[a_1] = ind_2
+      new_set[a_2] = 8 - ind_1
 
-    new_pre_box.append(ind_set)
+    new_pre_box.append(new_set)
+    
 
   return new_pre_box
 

@@ -1,4 +1,4 @@
-# cgm_3d_cnn - a 3d cnn that can predict protein secondary structure
+# cgm_3d_cnn - A 3D convolutional neural network that predicts protein secondary structure
 
 *Anastasiya V. Kulikova and Claus O. Wilke*
 

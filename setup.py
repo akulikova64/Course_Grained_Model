@@ -1,11 +1,16 @@
 from setuptools import setup
 
-
 INSTALL_REQUIRES=[
         "keras>=2.3", 
         "tensorflow>=2.0",
         "matplotlib>=3.1"
         ]
+
+EXTRAS_REQUIRE={
+  "dev": [
+    "pytest>=5.4"
+  ]
+}
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -18,7 +23,10 @@ setup(
     description="A 3D Convolutional Neural Network that predicts protein secondary structure.",
     long_description=long_description,
     long_description_content_type="text/markdown",
+    py_modules=["cgm_cnn_rotations", "rotations", "small_cgm_cnn"],
+    package_dir={"": "src"},
     install_requires=INSTALL_REQUIRES,
+    extras_require=EXTRAS_REQUIRE,
     url="https://github.com/akulikova64/cgm_3d_cnn",
     classifiers=[
         "Programming Language :: Python :: 3",

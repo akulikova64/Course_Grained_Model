@@ -4,7 +4,7 @@ import random
 
 # axis is the axis across which the rotation occurs
 # rot_num is the number of 90 degree rotations needed (0, 1, 2 or 3)
-def rotate_box(pre_box, axis, rot_num = 4, box_size = 9): #box size is the number of bins
+def rotate_box(pre_box, axis, rot_num = 0, box_size = 9): #box size is the number of bins
   box_size -= 1 # with 9 bins, indices are 0-8
   dict = {"x":[1, 2], "y":[0, 2], "z":[0, 1]} # lists the axes to be changed if rotated around key
   new_pre_box = []

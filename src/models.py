@@ -24,7 +24,7 @@ except ImportError:
 # models
 
 # cnn model structure
-def model_1():
+def model_1(GPUS = 1):
   model = Sequential()
   model.add(Convolution3D(32, kernel_size = (3, 3, 3), strides = (1, 1, 1), activation = 'relu', input_shape = (9, 9, 9, 20))) # 32 output nodes, kernel_size is your moving window, activation function, input shape = auto calculated
   model.add(Convolution3D(32, (3, 3, 3), activation = 'relu'))
@@ -33,14 +33,13 @@ def model_1():
   model.add(Dense(500, activation = 'relu')) # 500 nodes in the last hidden layer
   model.add(Dense(20, activation = 'softmax')) # output layer has 20 possible classes (amino acids 0 - 19)
 
-  # turn on multi_gpu_model for TACC
-  #model = multi_gpu_model(model, gpus=4)
+  model = multi_gpu_model(model, gpus=GPUS)
 
   model.compile(loss ='categorical_crossentropy', optimizer = Adam(lr = .001), metrics = ['accuracy'])
 
   return model
 
-def model_2():
+def model_2(GPUS = 1):
   model = Sequential()
   model.add(Convolution3D(32, kernel_size = (3, 3, 3), strides = (1, 1, 1), activation = 'relu', input_shape = (9, 9, 9, 20))) # 32 output nodes, kernel_size is your moving window, activation function, input shape = auto calculated
   model.add(Convolution3D(32, (3, 3, 3), activation = 'relu'))
@@ -51,13 +50,13 @@ def model_2():
   model.add(Dense(1000, activation = 'relu')) # 500 nodes in the last hidden layer
   model.add(Dense(20, activation = 'softmax')) # output layer has 20 possible classes (amino acids 0 - 19)
 
-  model = multi_gpu_model(model, gpus=4)
+  model = multi_gpu_model(model, gpus=GPUS)
 
   model.compile(loss ='categorical_crossentropy', optimizer = Adam(lr = .001), metrics = ['accuracy'])
 
   return model
 
-def model_3():
+def model_3(GPUS = 1):
   model = Sequential()
   model.add(Convolution3D(60, kernel_size = (3, 3, 3), strides = (1, 1, 1), activation = 'relu', input_shape = (9, 9, 9, 20))) # 32 output nodes, kernel_size is your moving window, activation function, input shape = auto calculated
   model.add(Convolution3D(60, (3, 3, 3), activation = 'relu'))
@@ -66,7 +65,7 @@ def model_3():
   model.add(Dense(1000, activation = 'relu')) # 500 nodes in the last hidden layer
   model.add(Dense(20, activation = 'softmax')) # output layer has 20 possible classes (amino acids 0 - 19)
 
-  model = multi_gpu_model(model, gpus=4)
+  model = multi_gpu_model(model, gpus=GPUS)
 
   model.compile(loss ='categorical_crossentropy', optimizer = Adam(lr = .001), metrics = ['accuracy'])
 

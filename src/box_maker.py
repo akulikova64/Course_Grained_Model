@@ -13,6 +13,7 @@ except ImportError:
 
 # fill a box
 def make_one_box(pre_box):
+  """ Makes and fills one expanded final box """
   box = np.zeros([9, 9, 9, 20]) # 4D array filled with 0
 
   for ind_set in pre_box:
@@ -22,6 +23,7 @@ def make_one_box(pre_box):
 
 # returns list of condensed boxes
 def get_box_list(path): 
+  """ compiles a list of preboxes from multiple files """
   fileList = os.listdir(path)
   pre_box_list = []
   center_aa_list = []
@@ -42,6 +44,7 @@ def get_box_list(path):
 
 # preparing testing data
 def get_test_data(path_x, path_y):
+  """ loads testing data into one list of expanded boxes """
   x_data_test = np.load(path_x, allow_pickle = True)
   y_data_test = np.load(path_y, allow_pickle = True)
   

@@ -3,6 +3,7 @@ from matplotlib import pyplot as plt
 
 #graphing the accuracy and loss for both the training and test data
 def get_plots(history):
+  """ creates simple plots of accuracy and loss for training and validation """
   #summarize history for accuracy 
   plt.plot(history.history['accuracy'])
   plt.plot(history.history['val_accuracy'])

@@ -29,6 +29,7 @@ except ImportError:
 
 # training the model
 def train_model(model, batch_size, epochs, rotations, x_train, y_train, x_val, y_val):
+  """ calling the model to train """
 
   history = model.fit_generator(
             generator = train_dataGenerator(x_train, y_train, batch_size, rotations),
@@ -43,6 +44,8 @@ def train_model(model, batch_size, epochs, rotations, x_train, y_train, x_val, y
 
 # returns testing results
 def get_testing_results(model, batch_size, x_test, y_test):
+  """ testing the trained model """
+  
   score = model.evaluate(x_test, y_test, verbose = 1, steps = int(len(x_test)/batch_size))  
   #score = model.evaluate_generator(x_test, y_test, verbose = 1, steps = int(len(x_test)/batch_size))
   model.save('model.h5')

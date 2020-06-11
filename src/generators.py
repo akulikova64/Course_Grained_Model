@@ -6,7 +6,7 @@ from box_maker import make_one_box
 try:
   from keras.utils import np_utils
   from keras.utils import to_categorical
-  
+
 except ImportError:
   from tensorflow.keras.utils import np_utils
   from tensorflow.keras.utils import to_categorical
@@ -15,6 +15,7 @@ except ImportError:
 
 # generator for validation data
 def test_val_dataGenerator(pre_boxes, center_aa_list, batch_size):
+  """ data generator for testing and validation in batches data without rotations """
   while True:
       for i in range(0, len(pre_boxes) - batch_size, batch_size):
         box_list = []
@@ -28,6 +29,7 @@ def test_val_dataGenerator(pre_boxes, center_aa_list, batch_size):
 
 # generator for training data
 def train_dataGenerator(pre_boxes, center_aa_list, batch_size, rotations):
+  """ generates data for training in batches with rotations """
   zip_lists = list(zip(pre_boxes, center_aa_list))
   random.shuffle(zip_lists)
   pre_boxes, center_aa_list = list(zip(*zip_lists))

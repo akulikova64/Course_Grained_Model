@@ -23,7 +23,7 @@ setup(
     description="A 3D Convolutional Neural Network that predicts protein secondary structure.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    py_modules=["cgm_cnn_rotations", "rotations", "small_cgm_cnn"],
+    py_modules=["cgm_cnn_rotations", "rotations", "small_cgm_cnn", "box_maker", "generators", "plot_maker", "models", "train_test"],
     package_dir={"": "src"},
     install_requires=INSTALL_REQUIRES,
     extras_require=EXTRAS_REQUIRE,

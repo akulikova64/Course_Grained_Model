@@ -12,10 +12,11 @@ ROTATIONS = 4 # number of box rotations
 BATCH_SIZE = 20 # batch_size must be divisible by "ROTATIONS"
 
 # data paths
-training_path = "./boxes/"
-validation_path = "./boxes_38/"
-testing_path_x = "./testing/boxes_test.npy"
-testing_path_y = "./testing/centers_test.npy"
+#training_path = "../boxes/"
+training_path = "../boxes_38/"
+validation_path = "../boxes_38/"
+testing_path_x = "../testing/boxes_test.npy"
+testing_path_y = "../testing/centers_test.npy"
 
 # training and validation
 x_train, y_train = get_box_list(training_path) # preparing training data (boxes, centers)

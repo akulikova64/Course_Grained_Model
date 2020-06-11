@@ -10,6 +10,8 @@ try:
   from keras.callbacks import Callback
   from keras.models import load_model
   from keras.utils import multi_gpu_model
+  from keras.utils import np_utils
+  from keras.utils import to_categorical
 
 except ImportError:
   import tensorflow
@@ -20,6 +22,8 @@ except ImportError:
   from tensorflow.keras.optimizers import Adam
   from tensorflow.keras.models import load_model
   from tensorflow.keras.utils import multi_gpu_model
+  from tensorflow.keras.utils import np_utils
+  from tensorflow.keras.utils import to_categorical
 
 # Training and testing
 

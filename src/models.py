@@ -33,7 +33,8 @@ def model_1():
   model.add(Dense(500, activation = 'relu')) # 500 nodes in the last hidden layer
   model.add(Dense(20, activation = 'softmax')) # output layer has 20 possible classes (amino acids 0 - 19)
 
-  model = multi_gpu_model(model, gpus=4)
+  # turn on multi_gpu_model for TACC
+  #model = multi_gpu_model(model, gpus=4)
 
   model.compile(loss ='categorical_crossentropy', optimizer = Adam(lr = .001), metrics = ['accuracy'])
 

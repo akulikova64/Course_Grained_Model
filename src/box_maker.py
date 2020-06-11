@@ -1,6 +1,14 @@
 import os
 import numpy as np
 
+try:
+  from keras.utils import np_utils
+  from keras.utils import to_categorical
+  
+except ImportError:
+  from tensorflow.keras.utils import np_utils
+  from tensorflow.keras.utils import to_categorical
+
 # box-maker
 
 # fill a box

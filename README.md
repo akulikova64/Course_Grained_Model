@@ -3,6 +3,7 @@
 *Anastasiya V. Kulikova and Claus O. Wilke*
 
 [![PyPI version](https://badge.fury.io/py/cgm_3d_cnn.svg)](https://badge.fury.io/py/cgm_3d_cnn)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/cgm_3d_cnn)
 ![PyPI - License](https://img.shields.io/pypi/l/cgm_3d_cnn)
 
 ## Overview

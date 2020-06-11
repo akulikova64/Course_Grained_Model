@@ -5,6 +5,8 @@ import random
 # axis is the axis across which the rotation occurs
 # rot_num is the number of 90 degree rotations needed (0, 1, 2 or 3)
 def rotate_box(pre_box, axis, rot_num = 0, box_size = 9): #box size is the number of bins
+  """ rotates box along one axis rot_num times """
+
   box_size -= 1 # with 9 bins, indices are 0-8
   dict = {"x":[1, 2], "y":[0, 2], "z":[0, 1]} # lists the axes to be changed if rotated around key
   new_pre_box = []
@@ -32,6 +34,8 @@ def rotate_box(pre_box, axis, rot_num = 0, box_size = 9): #box size is the numbe
   return new_pre_box
 
 def multiple_rotations(i, pre_box, box_size = 9): # i is a value from 0-23 (encodes the 24 possible rotations)
+  """ rotates box into one of 24 possible cube orientations """
+
   prebox_1 = rotate_box(pre_box, "z", i%4, box_size) # remainder conveniently assignes i to one of 4 z-axis rotations.
 
   # rotate along x or y
@@ -47,6 +51,7 @@ def multiple_rotations(i, pre_box, box_size = 9): # i is a value from 0-23 (enco
 
 # chooses one of 24 conformations
 def rotation_combo(pre_box, rotations, box_size = 9):
+  """ randomly selects one of the 24 orientations of a cube """
   final_preboxes = []
   rot_list = random.sample(range(0, 24), rotations) # get random cube conformations "rotations" number of times.
 

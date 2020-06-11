@@ -1,4 +1,4 @@
-# cgm_3d_cnn - Protein sequence prediction tool
+# cgm_3d_cnn - A tool that predicts protein structure from short and long-range contacts
 
 *Anastasiya V. Kulikova and Claus O. Wilke*
 

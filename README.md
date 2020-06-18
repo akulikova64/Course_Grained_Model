@@ -1,4 +1,5 @@
-# cgm_3d_cnn - A tool that predicts protein structure from short and long-range contacts
+# cgm_3d_cnn - 
+## A python library for building 3D convolutional neural networks for predicting protein structure
 
 *Anastasiya V. Kulikova and Claus O. Wilke*
 

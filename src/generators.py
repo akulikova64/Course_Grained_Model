@@ -4,11 +4,8 @@ from rotations import rotation_combo
 from box_maker import make_one_box
 
 try:
-  from keras.utils import np_utils
   from keras.utils import to_categorical
-
 except ImportError:
-  from tensorflow.keras.utils import np_utils
   from tensorflow.keras.utils import to_categorical
 
 # data generators:
@@ -25,7 +22,7 @@ def test_val_dataGenerator(pre_boxes, center_aa_list, batch_size):
           box_list.append(box)
           center_list.append(center_aa_list[j])
 
-        yield np.asarray(box_list), np_utils.to_categorical(center_list, 20)
+        yield np.asarray(box_list), to_categorical(center_list, 20)
 
 # generator for training data
 def train_dataGenerator(pre_boxes, center_aa_list, batch_size, rotations):
@@ -46,4 +43,4 @@ def train_dataGenerator(pre_boxes, center_aa_list, batch_size, rotations):
           for z in range(0, rotations):
             center_list.append(center_aa_list[j])
 
-        yield np.asarray(box_list), np_utils.to_categorical(center_list, 20)
+        yield np.asarray(box_list), to_categorical(center_list, 20)

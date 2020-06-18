@@ -2,11 +2,8 @@ import os
 import numpy as np
 
 try:
-  from keras.utils import np_utils
   from keras.utils import to_categorical
-  
 except ImportError:
-  from tensorflow.keras.utils import np_utils
   from tensorflow.keras.utils import to_categorical
 
 # box-maker
@@ -54,6 +51,6 @@ def get_test_data(path_x, path_y):
     x_test.append(box)
 
   x_test = np.asarray(x_test)
-  y_test = np_utils.to_categorical(y_data_test, 20)
+  y_test = to_categorical(y_data_test, 20)
 
   return x_test, y_test

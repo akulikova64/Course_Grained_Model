@@ -7,13 +7,13 @@ from train_test import get_testing_results
 from plot_maker import get_plots
 
 # variables
-EPOCHS = 1 # iterations through the data
-ROTATIONS = 4 # number of box rotations
+EPOCHS = 3 # iterations through the data
+ROTATIONS = 4 # number of box rotations per box
 BATCH_SIZE = 20 # batch_size must be divisible by "ROTATIONS"
 GPUS = 4 # max is 4 GPUs
 
 # data paths
-training_path = "../boxes/"
+training_path = "../boxes_tenth/"
 validation_path = "../boxes_38/"
 testing_path_x = "../testing/boxes_test.npy"
 testing_path_y = "../testing/centers_test.npy"

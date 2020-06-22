@@ -25,8 +25,9 @@ def model_1(GPUS = 1):
   """ model with three conv layers and one dense layer """
   model = Sequential()
   model.add(Convolution3D(32, kernel_size = (3, 3, 3), strides = (1, 1, 1), activation = 'relu', input_shape = (9, 9, 9, 20))) # 32 output nodes, kernel_size is your moving window, activation function, input shape = auto calculated
-  model.add(Convolution3D(32, (3, 3, 3), activation = 'relu'))
-  model.add(Convolution3D(32, (3, 3, 3), activation = 'relu'))
+  model.add(Convolution3D(32, (4, 4, 4), activation = 'relu'))
+  model.add(Convolution3D(32, (5, 5, 5), activation = 'relu'))
+  model.add(Convolution3D(32, (7, 7, 7), activation = 'relu'))
   model.add(Flatten()) # now our layers have been combined to one
   model.add(Dense(500, activation = 'relu')) # 500 nodes in the last hidden layer
   model.add(Dense(20, activation = 'softmax')) # output layer has 20 possible classes (amino acids 0 - 19)

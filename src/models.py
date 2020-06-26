@@ -54,7 +54,7 @@ def model_2(GPUS = 1):
   return model
 
 def model_3(GPUS = 1):
-  """ model with three conv layers, one dense layer and more neurons """
+  """ model with three medium conv layers, one dense layer and more neurons """
   model = Sequential()
   model.add(Convolution3D(60, kernel_size = (3, 3, 3), strides = (1, 1, 1), activation = 'relu', input_shape = (9, 9, 9, 20))) # 32 output nodes, kernel_size is your moving window, activation function, input shape = auto calculated
   model.add(Convolution3D(60, (3, 3, 3), activation = 'relu'))

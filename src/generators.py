@@ -2,6 +2,7 @@ import random
 import numpy as np
 from rotations import rotation_combo
 from box_maker import make_one_box
+from box_maker import make_blurred_box
 
 try:
   from keras.utils import to_categorical

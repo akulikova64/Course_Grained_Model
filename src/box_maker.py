@@ -52,7 +52,6 @@ def get_value(x, y, z):
 
   return values[center_count]
 
-
 # returns list of condensed boxes
 def get_box_list(path): 
   """ compiles a list of preboxes from multiple files """

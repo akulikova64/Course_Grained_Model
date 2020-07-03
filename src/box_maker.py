@@ -18,6 +18,41 @@ def make_one_box(pre_box):
 
   return box
 
+def make_blurred_box(pre_box):
+  """ Makes and fills one expanded final box with blur"""
+  box = np.zeros([9, 9, 9, 20]) # 4D array filled with 0
+
+  for ind_set in pre_box:
+
+    # all coordinate combinations of a 3x3x3 box
+    for x in range(0,3):
+      for y in range(0,3):
+        for z in range(0,3):
+
+          # subtracting 1, staying same or adding 1
+          x_coord = ind_set[0]+(x-1) 
+          y_coord = ind_set[1]+(y-1)
+          z_coord = ind_set[2]+(z-1)
+
+           # check boundaries
+          if not(x_coord >= 0 and x_coord < 9):
+            continue
+          if not(y_coord >= 0 and y_coord < 9):
+            continue
+          if not(z_coord >= 0 and z_coord < 9):
+            continue
+
+          box[x_coord][y_coord][z_coord][ind_set[3]] += get_value(x,y,z)
+
+  return box
+
+def get_value(x, y, z):
+  center_count = (x % 2) + (y % 2) + (z % 2) # counting the number of "1" in our coordinates (centers)
+  values = [0.0075, 0.02, 0.05, 0.4] # corner, edge, major axis, center
+
+  return values[center_count]
+
+
 # returns list of condensed boxes
 def get_box_list(path): 
   """ compiles a list of preboxes from multiple files """

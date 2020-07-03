@@ -39,7 +39,10 @@ def train_dataGenerator(pre_boxes, center_aa_list, batch_size, rotations):
         for j in range(i, i + batch_fraction): 
           rotated_boxes = rotation_combo(pre_boxes[j], rotations)
           for rotated_box in rotated_boxes:
-            box_list.append(make_one_box(rotated_box))
+            if BLUR == False:
+              box_list.append(make_one_box(rotated_box))
+            else:
+              box_list.append(make_blurred_box(rotated_box))
           for z in range(0, rotations):
             center_list.append(center_aa_list[j])
 

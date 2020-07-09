@@ -3,7 +3,7 @@ import sys
 import os
 sys.path.append(os.path.abspath(".."))
 from rotations import multiple_rotations
-# testing the rotation functions in rotations.py 
+# testing the multiple_rotations function in rotations.py 
 
 def test_z_rotations():
   box_size = 2

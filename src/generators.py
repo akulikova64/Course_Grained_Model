@@ -22,7 +22,7 @@ def test_val_dataGenerator(pre_boxes, center_aa_list, batch_size, BLUR, center_p
           if BLUR == False:
             box = make_one_box(pre_boxes[j])
           else:
-            box = make_blurred_box(pre_boxes[j], center_prob)
+            box = make_blurred_box(pre_boxes[j], center_prob, box_size = 9)
           
           box_list.append(box)
           center_list.append(center_aa_list[j])
@@ -47,7 +47,7 @@ def train_dataGenerator(pre_boxes, center_aa_list, batch_size, rotations, BLUR, 
             if BLUR == False:
               box_list.append(make_one_box(rotated_box))
             else:
-              box_list.append(make_blurred_box(rotated_box, center_prob))
+              box_list.append(make_blurred_box(rotated_box, center_prob, box_size = 9))
           for z in range(0, rotations):
             center_list.append(center_aa_list[j])
 

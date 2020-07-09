@@ -18,9 +18,9 @@ def make_one_box(pre_box):
 
   return box
 
-def make_blurred_box(pre_box, center_prob):
+def make_blurred_box(pre_box, center_prob, box_size):
   """ Makes and fills one expanded final box with blur"""
-  box = np.zeros([9, 9, 9, 20]) # 4D array filled with 0
+  box = np.zeros([box_size, box_size, box_size, 20]) # 4D array filled with 0
 
   for ind_set in pre_box:
 
@@ -29,12 +29,12 @@ def make_blurred_box(pre_box, center_prob):
       for y in range(0,3):
         for z in range(0,3):
 
-          # subtracting 1, staying same or adding 1 to later check boundaries
+          # subtracting 1, staying same or adding 1 to get all coordinates around center
           x_coord = ind_set[0]+(x-1) 
           y_coord = ind_set[1]+(y-1)
           z_coord = ind_set[2]+(z-1)
 
-          if out_of_bound(x_coord, y_coord, z_coord, 9): # check box boundaries (9x9x9)
+          if out_of_bound(x_coord, y_coord, z_coord, box_size): # check box boundaries (9x9x9)
             continue
 
           box[x_coord][y_coord][z_coord][ind_set[3]] += get_value(x,y,z, center_prob)

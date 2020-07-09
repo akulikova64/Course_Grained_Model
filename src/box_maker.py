@@ -18,7 +18,7 @@ def make_one_box(pre_box):
 
   return box
 
-def make_blurred_box(pre_box):
+def make_blurred_box(pre_box, center_prob):
   """ Makes and fills one expanded final box with blur"""
   box = np.zeros([9, 9, 9, 20]) # 4D array filled with 0
 
@@ -42,13 +42,16 @@ def make_blurred_box(pre_box):
           if not(z_coord >= 0 and z_coord < 9):
             continue
 
-          box[x_coord][y_coord][z_coord][ind_set[3]] += get_value(x,y,z)
+          box[x_coord][y_coord][z_coord][ind_set[3]] += get_value(x,y,z, center_prob)
 
   return box
 
-def get_value(x, y, z):
+def get_value(x, y, z, center_prob):
+  """ Calculates the probability for the box at x, y, z (within a 3x3x3 box)"""
   center_count = (x % 2) + (y % 2) + (z % 2) # counting the number of "1" in our coordinates (centers)
-  values = [0.0075, 0.02, 0.05, 0.4] # corner, edge, major axis, center
+  prob_unit = (1-center_prob)/14 # the probability per voxel/cube around center cube
+  values = [(prob_unit/4), (prob_unit/2), prob_unit, center_prob] # corner, edge, major axis, center
+  # indexes in values list correspond to the number of centers of each box type (center_count)
 
   return values[center_count]
 

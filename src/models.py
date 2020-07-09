@@ -86,3 +86,5 @@ def model_3(GPUS = 1):
   model.compile(loss ='categorical_crossentropy', optimizer = Adam(lr = .001), metrics = ['accuracy'])
 
   return model
+
+

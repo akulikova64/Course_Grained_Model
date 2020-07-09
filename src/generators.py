@@ -26,7 +26,7 @@ def test_val_dataGenerator(pre_boxes, center_aa_list, batch_size):
         yield np.asarray(box_list), to_categorical(center_list, 20)
 
 # generator for training data
-def train_dataGenerator(pre_boxes, center_aa_list, batch_size, rotations):
+def train_dataGenerator(pre_boxes, center_aa_list, batch_size, rotations, BLUR, center_prob):
   """ generates data for training in batches with rotations """
   zip_lists = list(zip(pre_boxes, center_aa_list))
   random.shuffle(zip_lists)
@@ -43,7 +43,7 @@ def train_dataGenerator(pre_boxes, center_aa_list, batch_size, rotations):
             if BLUR == False:
               box_list.append(make_one_box(rotated_box))
             else:
-              box_list.append(make_blurred_box(rotated_box))
+              box_list.append(make_blurred_box(rotated_box, center_prob))
           for z in range(0, rotations):
             center_list.append(center_aa_list[j])
 

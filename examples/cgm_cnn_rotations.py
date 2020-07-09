@@ -11,6 +11,8 @@ EPOCHS = 3 # iterations through the data
 ROTATIONS = 4 # number of box rotations per box
 BATCH_SIZE = 20 # batch_size must be divisible by "ROTATIONS"
 GPUS = 4 # max is 4 GPUs
+BLUR = True
+center_prob = 0.4 if BLUR else 1 # probability of amino acid in center voxel
 
 # data paths
 training_path = "../boxes_tenth/"
@@ -22,7 +24,7 @@ testing_path_y = "../testing/centers_test.npy"
 x_train, y_train = get_box_list(training_path) # preparing training data (boxes, centers)
 x_val, y_val = get_box_list(validation_path) # preparing validation data (boxes, centers)
 model = models.model_1(GPUS)
-history = train_model(model, BATCH_SIZE, EPOCHS, ROTATIONS, x_train, y_train, x_val, y_val)
+history = train_model(model, BATCH_SIZE, EPOCHS, ROTATIONS, BLUR, center_prob, x_train, y_train, x_val, y_val)
 
 # testing
 x_test, y_test = get_test_data(testing_path_x, testing_path_y)

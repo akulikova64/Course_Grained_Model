@@ -12,14 +12,18 @@ except ImportError:
 # data generators:
 
 # generator for validation data
-def test_val_dataGenerator(pre_boxes, center_aa_list, batch_size):
+def test_val_dataGenerator(pre_boxes, center_aa_list, batch_size, BLUR, center_prob):
   """ data generator for testing and validation in batches data without rotations """
   while True:
       for i in range(0, len(pre_boxes) - batch_size, batch_size):
         box_list = []
         center_list = []
         for j in range(i, i + batch_size): 
-          box = make_one_box(pre_boxes[j])
+          if BLUR == False:
+            box = make_one_box(pre_boxes[j])
+          else:
+            box = make_blurred_box(pre_boxes[j], center_prob)
+          
           box_list.append(box)
           center_list.append(center_aa_list[j])
 

@@ -25,12 +25,12 @@ except ImportError:
 # Training and testing
 
 # training the model
-def train_model(model, batch_size, epochs, rotations, x_train, y_train, x_val, y_val):
+def train_model(model, batch_size, epochs, rotations, BLUR, center_prob, x_train, y_train, x_val, y_val):
   """ calling the model to train """
 
   history = model.fit_generator(
-            generator = train_dataGenerator(x_train, y_train, batch_size, rotations),
-            validation_data = test_val_dataGenerator(x_val, y_val, batch_size),
+            generator = train_dataGenerator(x_train, y_train, batch_size, rotations, BLUR, center_prob),
+            validation_data = test_val_dataGenerator(x_val, y_val, batch_size, BLUR, center_prob),
             validation_steps = 20,
             steps_per_epoch = len(x_train)/batch_size, 
             epochs = epochs, 

@@ -35,6 +35,9 @@ validation_path = "../boxes_38/"
 testing_path_x = "../testing/boxes_test.npy"
 testing_path_y = "../testing/centers_test.npy"
 
+### models:
+my_models = {"3": model_3(), "5": model_5()}
+
 ### setting parameters for training
 loss ='categorical_crossentropy'
 optimizer = Adam(lr = learning_rate)
@@ -49,7 +52,8 @@ x_train, y_train = get_box_list(training_path) # preparing training data (boxes,
 print("Finished loading training data: " + datetime.now().time())
 x_val, y_val = get_box_list(validation_path) # preparing validation data (boxes, centers)
 print("Finished loading validation data: " + datetime.now().time())
-model = models.model_1(GPUS)
+model = models.my_models[model_id](GPUS)
+
 print("Model compiled, starting to train: " + datetime.now().time())
 history = train_model(model, BATCH_SIZE, EPOCHS, ROTATIONS, BLUR, center_prob, x_train, y_train, x_val, y_val)
 

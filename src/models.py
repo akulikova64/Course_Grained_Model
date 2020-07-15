@@ -21,7 +21,7 @@ except ImportError:
 # models
 
 # cnn model structure
-def model_1(GPUS = 1, loss, optimizer, metrics):
+def model_1(GPUS = 1):
   """ model with three conv layers and one dense layer """
   model = Sequential()
   model.add(Convolution3D(32, kernel_size = (3, 3, 3), strides = (1, 1, 1), activation = 'relu', input_shape = (9, 9, 9, 20))) # 32 output nodes, kernel_size is your moving window, activation function, input shape = auto calculated
@@ -79,7 +79,7 @@ def model_4(GPUS = 1, loss, optimizer, metrics):
 
   return model
 
-  def model_4(GPUS = 1, loss, optimizer, metrics):
+def model_4(GPUS = 1, loss, optimizer, metrics):
   """ model with three medium conv layers, one dense layer and more neurons """
   model = Sequential()
   model.add(Convolution3D(30, kernel_size = (1, 1, 1), strides = (1, 1, 1), activation = 'relu', input_shape = (9, 9, 9, 20))) # 32 output nodes, kernel_size is your moving window, activation function, input shape = auto calculated

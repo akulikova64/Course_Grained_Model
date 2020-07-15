@@ -122,9 +122,10 @@ def test_diff_center_probs():
   box = make_blurred_box(prebox, 0.2, box_size)
   assert abs(box[1, 1, 0, 15] - (0.8/14)) < 0.0001
 
-  box = make_blurred_box(prebox, 1, box_size)
-  assert abs(box[1, 1, 0, 15] - 0) < 0.0001
-
   box = make_blurred_box(prebox, 0, box_size)
   assert abs(box[1, 1, 0, 15] - (1/14)) < 0.0001
+
+  box = make_blurred_box(prebox, 1, box_size)
+  assert box[1, 1, 0, 15] == 0
+
 

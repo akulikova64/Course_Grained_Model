@@ -42,9 +42,7 @@ def train_model(model, batch_size, epochs, rotations, BLUR, center_prob, x_train
 # returns testing results
 def get_testing_results(model, batch_size, x_test, y_test):
   """ testing the trained model """
-  
   score = model.evaluate(x_test, y_test, verbose = 1, steps = int(len(x_test)/batch_size))  
   #score = model.evaluate_generator(x_test, y_test, verbose = 1, steps = int(len(x_test)/batch_size))
-  model.save('model.h5')
 
   return score

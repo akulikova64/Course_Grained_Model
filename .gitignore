@@ -1,6 +1,7 @@
 /boxes_38
 /testing
-/src/model.h5
+/output
+*.h5
 *__pycache__
 *pytest_cache
 /build

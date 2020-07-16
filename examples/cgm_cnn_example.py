@@ -38,7 +38,6 @@ training_path = "../boxes_38/"
 validation_path = "../boxes_38/"
 testing_path_x = "../testing/boxes_test.npy"
 testing_path_y = "../testing/centers_test.npy"
-
 ### best models:
 my_models = {"3": models.model_3, "5": models.model_5}
 
@@ -52,8 +51,9 @@ metrics = ['accuracy']
 #========================================================================================================
 
 ### training and validation
+print("\nStarting to load training data:", timestamp())
 x_train, y_train = get_box_list(training_path) # preparing training data (boxes, centers)
-print("\nFinished loading training data:", timestamp())
+print("Finished loading training data:", timestamp())
 x_val, y_val = get_box_list(validation_path) # preparing validation data (boxes, centers)
 print("Finished loading validation data:", timestamp())
 model = my_models[model_id](GPUS)
@@ -70,7 +70,7 @@ print("Finished testing:", timestamp(), "\n")
 
 ### saving and loading trained model
 timestr = time.strftime("%Y%m%d-%H%M%S")
-model_name = "../output/model_" + model_id + " " + timestr + ".h5"
+model_name = "../output/model_" + model_id + "_" + timestr + ".h5"
 model.save(model_name)
 model = load_model(model_name)
 print("Loaded model:", timestamp(), "\n")

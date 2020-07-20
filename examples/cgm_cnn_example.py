@@ -31,10 +31,10 @@ GPUS = 1 # max is 4 GPUs
 BLUR = False
 center_prob = 0.44 if BLUR else 1 # probability of amino acid in center voxel
 model_id = "5"
-learning_rate = 0.1
+learning_rate = 0.001
 
 ### data paths/locations
-training_path = "../boxes_38/"
+training_path = "../boxes_tenth/"
 validation_path = "../boxes_38/"
 testing_path_x = "../testing/boxes_test.npy"
 testing_path_y = "../testing/centers_test.npy"

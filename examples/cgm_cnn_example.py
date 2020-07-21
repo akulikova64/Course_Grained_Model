@@ -39,7 +39,7 @@ validation_path = "../boxes_38/"
 testing_path_x = "../testing/boxes_test.npy"
 testing_path_y = "../testing/centers_test.npy"
 ### best models:
-my_models = {"3": models.model_3, "5": models.model_5}
+my_models = {"3": models.model_3, "5": models.model_5, "6": models.model_6, , "7": models.model_7, , "8": models.model_8, , "9": models.model_9, , "10": models.model_10, , "11": models.model_11}
 
 ### setting parameters for training
 loss ='categorical_crossentropy'

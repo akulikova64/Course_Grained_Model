@@ -10,7 +10,7 @@ import sys
 # Global variables:
 BOX_SIZE = 55 # length in A of a box dimension
 DELTA = BOX_SIZE/2
-VOXEL_SIZE = 5 # bin length in A
+VOXEL_SIZE = 5 # bin length in A ex 
 VOXELS = int(BOX_SIZE/VOXEL_SIZE)
  
 def process_residue(residue):
@@ -82,8 +82,9 @@ def process_residue(residue):
     return output_dict
 
 def get_residues_df(pdb_id):
-  pdb_file = '../PDB/' + pdb_id + '.pdb'
+  pdb_file = '../PDB/' + pdb_id + '_final_tot.pdb'
   structure = PDBParser().get_structure(pdb_id, pdb_file)
+  
   atoms = structure.get_atoms()
 
   ###Get residue coordinates
@@ -146,10 +147,14 @@ path = "../PDB/"
 fileList = os.listdir(path)
 for file in fileList:
   pdb_id = file[0:4] # "1b4t"
-  residues_df = get_residues_df(pdb_id)
+  try:
+    residues_df = get_residues_df(pdb_id)
+  except TypeError:
+    print(pdb_id)
+    continue
 
   #pdb_id = sys.argv[1]
-  residues_df = get_residues_df(pdb_id)
+  #residues_df = get_residues_df(pdb_id)
 
   SCcenter_coords = residues_df["SCcenter_coords"].values.tolist()
   seq = residues_df["amino_acid"].values.tolist()

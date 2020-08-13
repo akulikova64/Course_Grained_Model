@@ -8,9 +8,9 @@ import os
 import sys
 
 # Global variables:
-BOX_SIZE = 63
+BOX_SIZE = 55 # length in A of a box dimension
 DELTA = BOX_SIZE/2
-VOXEL_SIZE = 7
+VOXEL_SIZE = 5 # bin length in A
 VOXELS = int(BOX_SIZE/VOXEL_SIZE)
  
 def process_residue(residue):
@@ -82,7 +82,7 @@ def process_residue(residue):
     return output_dict
 
 def get_residues_df(pdb_id):
-  pdb_file = './PDB/' + pdb_id + '.pdb'
+  pdb_file = '../PDB/' + pdb_id + '.pdb'
   structure = PDBParser().get_structure(pdb_id, pdb_file)
   atoms = structure.get_atoms()
 
@@ -141,38 +141,38 @@ def fill_box(i_center, SCcenter_coords, seq):
 #========================================================================================
 # MAIN program below
 #========================================================================================
-'''
-path = "./PDB/"
+
+path = "../PDB/"
 fileList = os.listdir(path)
 for file in fileList:
-  pdb_id = file[0:4] #"1b4t"
-  residues_df = get_residues_df(pdb_id)'''
+  pdb_id = file[0:4] # "1b4t"
+  residues_df = get_residues_df(pdb_id)
 
-pdb_id = sys.argv[1]
-residues_df = get_residues_df(pdb_id)
+  #pdb_id = sys.argv[1]
+  residues_df = get_residues_df(pdb_id)
 
-SCcenter_coords = residues_df["SCcenter_coords"].values.tolist()
-seq = residues_df["amino_acid"].values.tolist()
+  SCcenter_coords = residues_df["SCcenter_coords"].values.tolist()
+  seq = residues_df["amino_acid"].values.tolist()
 
-# choosing the sample size (how many environments to be sampled from current protein)
-if len(seq) <= 200:
-  sample_size = int(len(seq)/2)
-else:
-  sample_size = 100
+  # choosing the sample size (how many environments to be sampled from current protein)
+  if len(seq) <= 200:
+    sample_size = int(len(seq)/2)
+  else:
+    sample_size = 100
 
-sample = random.sample(range(0, len(residues_df)), sample_size)
+  sample = random.sample(range(0, len(residues_df)), sample_size)
 
-# creating, filling and appending 4D box arrays to list
-box_list = []
-center_aa_list = []
+  # creating, filling and appending 4D box arrays to list
+  box_list = []
+  center_aa_list = []
 
-for center_aa_index in sample:
-  new_box = fill_box(center_aa_index, SCcenter_coords, seq)
-  box_list.append(new_box)
+  for center_aa_index in sample:
+    new_box = fill_box(center_aa_index, SCcenter_coords, seq)
+    box_list.append(new_box)
 
 
-np.save("./boxes/boxes_" + pdb_id + ".npy", np.asarray(box_list)) # add number to the protein and give matching number to the aa list
-np.save("./boxes/centers_" + pdb_id + ".npy", np.asarray(center_aa_list))
+  np.save("../boxes_2/boxes_" + pdb_id + ".npy", np.asarray(box_list)) # add number to the protein and give matching number to the aa list
+  np.save("../boxes_2/centers_" + pdb_id + ".npy", np.asarray(center_aa_list))
 
 
 # maverick2 ssh: achern64@maverick2.tacc.utexas.edu

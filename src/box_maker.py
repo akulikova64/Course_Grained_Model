@@ -9,9 +9,9 @@ except ImportError:
 # box-maker
 
 # fill a box
-def make_one_box(pre_box):
+def make_one_box(pre_box, box_size):
   """ Makes and fills one expanded final box """
-  box = np.zeros([9, 9, 9, 20]) # 4D array filled with 0
+  box = np.zeros([box_size, box_size, box_size, 20]) # 4D array filled with 0
 
   for ind_set in pre_box:
     box[ind_set[0]][ind_set[1]][ind_set[2]][ind_set[3]] += 1
@@ -83,14 +83,14 @@ def get_box_list(path):
   return pre_box_list, center_aa_list
 
 # preparing testing data
-def get_test_data(path_x, path_y):
+def get_test_data(path_x, path_y, box_size):
   """ loads testing data into one list of expanded boxes """
   x_data_test = np.load(path_x, allow_pickle = True)
   y_data_test = np.load(path_y, allow_pickle = True)
   
   x_test = []
   for index_set  in x_data_test:
-    box = make_one_box(index_set)
+    box = make_one_box(index_set, box_size)
     x_test.append(box)
 
   x_test = np.asarray(x_test)

@@ -1,13 +1,10 @@
 from matplotlib import pyplot as plt
+import csv
 from datetime import datetime
+import time
 
-def timestamp_2():
-  date_str = ""
-  date = str(datetime).split(" ")
-  for item in date:
-    date_str += ("_" + item + "_")
-
-  return date_str
+def timestamp():
+  return str(datetime.now().time())
 
 # plot-maker
 
@@ -21,26 +18,38 @@ def get_plots(history, model_id, BLUR, loss, optimizer, learning_rate, data):
                    "learning rate = " + str(learning_rate) + "\n" \
                    "training data = " + str(data)
 
+  timestr = time.strftime("%Y%m%d-%H%M%S")
+
   #summarize history for accuracy 
   plt.plot(history.history['accuracy'])
   plt.plot(history.history['val_accuracy'])
   plt.title('Model ' +  model_id  +  ' Accuracy')
-  plt.suptitle(str(datetime.now()))
+  plt.suptitle(str(datetime.now()), size = 7)
   plt.ylabel('accuracy')
   plt.xlabel('epoch')
   plt.legend(['training', 'validation'], loc = 'upper left')
-  plt.annotate(parameter_text, xy = (0.30, 0.78), xycoords = 'axes fraction')
-  plt.savefig("../output/Accuracy_model_" + model_id + timestamp_2() + ".pdf")
+  plt.annotate(parameter_text, xy = (0.28, 0.84), xycoords = 'axes fraction', size = 7)
+  plt.savefig("../output/Accuracy_model_" + model_id + "_" + timestr + ".pdf")
   plt.clf()
 
   # summarize history for loss
   plt.plot(history.history['loss'])
   plt.plot(history.history['val_loss'])
   plt.title('Model ' +  model_id  + ' Loss')
+  plt.suptitle(str(datetime.now()), size = 7)
   plt.ylabel('loss')
   plt.xlabel('epoch')
   plt.legend(['training', 'validaton'], loc = 'upper left')
-  plt.annotate(parameter_text, xy = (0.30, 0.78), xycoords = 'axes fraction')
-  plt.savefig("../output/loss_model_" + model_id + timestamp_2() + ".pdf")
+  plt.annotate(parameter_text, xy = (0.28, 0.84), xycoords = 'axes fraction', size = 7)
+  plt.savefig("../output/loss_model_" + model_id + "_" + timestr + ".pdf")
 
+  #saving data in a CSV file
+  path = "../output/model_" + model_id + "_" + timestr + ".csv"
+  print("Starting to write CSV file:", timestamp())
+  with open(path, 'w', newline='') as file:
+    writer = csv.writer(file)
+    writer.writerow(["Model_ID", "Epoch", "BLUR", "learning_rate", "Acc_train", "Acc_val", "Loss_train", "Loss_val"])
+    for i in range(0, len(history.history['accuracy'])):
+      writer.writerow([model_id, i+1, BLUR, learning_rate, history.history['accuracy'][i], history.history['val_accuracy'][i], history.history['loss'][i], history.history['val_loss'][i]])
+  print("Finished writing CSV file:", timestamp())
   

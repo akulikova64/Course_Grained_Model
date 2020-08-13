@@ -14,10 +14,12 @@ except ImportError:
   from tensorflow.keras.models import load_model
   from tensorflow.keras.optimizers import Adam
 
+import numpy as np
 import time
 from datetime import datetime
 def timestamp():
   return str(datetime.now().time())
+
 
 #========================================================================================================
 # Setting the variables, parameters and data paths/locations:
@@ -25,21 +27,22 @@ def timestamp():
 
 ### variables
 EPOCHS = 1 # iterations through the data
+BOX_SIZE = 11
 ROTATIONS = 4 # number of box rotations per box
 BATCH_SIZE = 20 # batch_size must be divisible by "ROTATIONS"
 GPUS = 1 # max is 4 GPUs
 BLUR = False
 center_prob = 0.44 if BLUR else 1 # probability of amino acid in center voxel
-model_id = "5"
-learning_rate = 0.001
+model_id = "26"
+learning_rate = 0.0001
 
 ### data paths/locations
-training_path = "../boxes_tenth/"
-validation_path = "../boxes_38/"
-testing_path_x = "../testing/boxes_test.npy"
-testing_path_y = "../testing/centers_test.npy"
+training_path = "../boxes_2/"
+validation_path = "../validation_2/"
+testing_path_x = "../testing_2/boxes_test.npy"
+testing_path_y = "../testing_2/centers_test.npy"
 ### best models:
-my_models = {"3": models.model_3, "5": models.model_5, "6": models.model_6, , "7": models.model_7, , "8": models.model_8, , "9": models.model_9, , "10": models.model_10, , "11": models.model_11}
+my_models = {"26": models.model_26, "5": models.model_5, "6": models.model_6, "7": models.model_7, "12": models.model_12, "13": models.model_13, "14": models.model_14, "15": models.model_15, "20": models.model_20, "21": models.model_21, "22": models.model_22, "23": models.model_23, "24": models.model_24, "25": models.model_25}
 
 ### setting parameters for training
 loss ='categorical_crossentropy'
@@ -56,17 +59,20 @@ x_train, y_train = get_box_list(training_path) # preparing training data (boxes,
 print("Finished loading training data:", timestamp())
 x_val, y_val = get_box_list(validation_path) # preparing validation data (boxes, centers)
 print("Finished loading validation data:", timestamp())
-model = my_models[model_id](GPUS)
+model = my_models[model_id](GPUS, BOX_SIZE)
 model.compile(loss = loss, optimizer = optimizer, metrics = metrics)
 print("Model compiled, starting to train:", timestamp(), "\n")
-history = train_model(model, BATCH_SIZE, EPOCHS, ROTATIONS, BLUR, center_prob, x_train, y_train, x_val, y_val)
+history = train_model(model, BATCH_SIZE, EPOCHS, ROTATIONS, BLUR, center_prob, x_train, y_train, x_val, y_val, BOX_SIZE)
 
 ### testing
 print("Finished training, loading test data:", timestamp())
-x_test, y_test = get_test_data(testing_path_x, testing_path_y)
+x_test, y_test = get_test_data(testing_path_x, testing_path_y, BOX_SIZE)
 print("Finished loading test data, testing:", timestamp())
 score = get_testing_results(model, BATCH_SIZE, x_test, y_test)
 print("Finished testing:", timestamp(), "\n")
+predictions = model.predict(x_test, verbose=1)
+np.save("../output/predictions_model_" + str(model_id) + ".npy", predictions)
+print("Finished predicting:", timestamp(), "\n")
 
 ### saving and loading trained model
 timestr = time.strftime("%Y%m%d-%H%M%S")

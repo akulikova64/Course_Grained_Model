@@ -1,6 +1,10 @@
 /boxes_38
+/boxes_2
+/testing_2
+/validation_2
 /testing
 /output
+pdb_add.list
 *.h5
 *__pycache__
 *pytest_cache

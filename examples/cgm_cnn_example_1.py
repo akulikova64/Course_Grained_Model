@@ -10,11 +10,9 @@ import models
 try:
   from keras.models import load_model
   from keras.optimizers import Adam
-  from keras.callbacks import ModelCheckpoint
 except ImportError:
   from tensorflow.keras.models import load_model
   from tensorflow.keras.optimizers import Adam
-  from tensorflow.keras.callbacks import ModelCheckpoint
 
 import numpy as np
 import time
@@ -35,7 +33,7 @@ BATCH_SIZE = 20 # batch_size must be divisible by "ROTATIONS"
 GPUS = 1 # max is 4 GPUs
 BLUR = False
 center_prob = 0.44 if BLUR else 1 # probability of amino acid in center voxel
-model_id = "30"
+model_id = "27"
 learning_rate = 0.0001
 
 ### data paths/locations
@@ -43,7 +41,6 @@ training_path = "../boxes_tenth/"
 validation_path = "../boxes_38/"
 testing_path_x = "../testing/boxes_test.npy"
 testing_path_y = "../testing/centers_test.npy"
-
 ### best models:
 my_models = {"27": models.model_27, "28": models.model_28, "29": models.model_29, "30": models.model_30, "12": models.model_12, "13": models.model_13, "14": models.model_14, "15": models.model_15, "20": models.model_20, "21": models.model_21, "22": models.model_22, "23": models.model_23, "24": models.model_24, "25": models.model_25}
 
@@ -56,42 +53,33 @@ metrics = ['accuracy']
 # Training, testing and saving the cnn:
 #========================================================================================================
 
-### loading data
+### training and validation
 print("\nStarting to load training data:", timestamp())
 x_train, y_train = get_box_list(training_path) # preparing training data (boxes, centers)
 print("Finished loading training data:", timestamp())
 x_val, y_val = get_box_list(validation_path) # preparing validation data (boxes, centers)
 print("Finished loading validation data:", timestamp())
-
-### compiling the model 
 model = my_models[model_id](GPUS, BOX_SIZE)
 model.compile(loss = loss, optimizer = optimizer, metrics = metrics)
 print("Model compiled, starting to train:", timestamp(), "\n")
+history = train_model(model, BATCH_SIZE, EPOCHS, ROTATIONS, BLUR, center_prob, x_train, y_train, x_val, y_val, BOX_SIZE)
 
-### checkpoint
-model_name = "../output/model_" + model_id + ".h5"
-checkpoint = ModelCheckpoint(model_name, monitor='loss', verbose=1, save_best_only=True)
-callbacks_list = [checkpoint]
-
-### training and validation
-history = train_model(model, callbacks_list, BATCH_SIZE, EPOCHS, ROTATIONS, BLUR, center_prob, x_train, y_train, x_val, y_val, BOX_SIZE)
-
-### saving model
-timestr = time.strftime("%Y%m%d-%H%M%S")
-model_name = "../output/model_" + model_id + "_" + timestr + ".h5"
-model.save(model_name)
- 
 ### testing
 print("Finished training, loading test data:", timestamp())
 x_test, y_test = get_test_data(testing_path_x, testing_path_y, BOX_SIZE)
 print("Finished loading test data, testing:", timestamp())
 score = get_testing_results(model, BATCH_SIZE, x_test, y_test)
 print("Finished testing:", timestamp(), "\n")
-
-### saving validation predictions
 predictions = model.predict(x_test, verbose=1)
 np.save("../output/predictions_model_" + str(model_id) + ".npy", predictions)
 print("Finished predicting:", timestamp(), "\n")
+
+### saving and loading trained model
+timestr = time.strftime("%Y%m%d-%H%M%S")
+model_name = "../output/model_" + model_id + "_" + timestr + ".h5"
+model.save(model_name)
+model = load_model(model_name)
+print("Loaded model:", timestamp(), "\n")
 
 ### results
 get_plots(history, model_id, BLUR, loss, optimizer, learning_rate, training_path[3:-1])

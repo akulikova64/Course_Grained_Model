@@ -579,4 +579,94 @@ def model_26(GPUS = 1, box_size = 9):
 
   return model
 
+def model_27(GPUS = 1, box_size = 9):
+  """ one dense: 20  """
+  model = Sequential()
+  model.add(Convolution3D(60, kernel_size = (3, 3, 3), strides = (1, 1, 1), input_shape = (box_size, box_size, box_size, 20))) # 32 output nodes, kernel_size is your moving window, activation function, input shape = auto calculated
+  model.add(BatchNormalization())
+  model.add(Activation(activation = 'relu'))
+  model.add(Convolution3D(60, (2, 2, 2))) 
+  model.add(BatchNormalization())
+  model.add(Activation(activation = 'relu'))
+  model.add(Convolution3D(60, (2, 2, 2))) 
+  model.add(BatchNormalization())
+  model.add(Activation(activation = 'relu'))
+  model.add(Flatten()) # now our layers have been combined to one
+  model.add(Dense(20)) # 300 nodes in the last hidden layer
+  model.add(BatchNormalization())
+  model.add(Activation(activation = 'relu'))
+  model.add(Dense(20, activation = 'softmax')) # output layer has 20 possible classes (amino acids 0 - 19)
+  
+  if GPUS >= 2:
+    model = multi_gpu_model(model, gpus=GPUS)
 
+  return model
+  
+def model_28(GPUS = 1, box_size = 9):
+  """ one dense: 50 """
+  model = Sequential()
+  model.add(Convolution3D(60, kernel_size = (3, 3, 3), strides = (1, 1, 1), input_shape = (box_size, box_size, box_size, 20))) # 32 output nodes, kernel_size is your moving window, activation function, input shape = auto calculated
+  model.add(BatchNormalization())
+  model.add(Activation(activation = 'relu'))
+  model.add(Convolution3D(60, (2, 2, 2))) 
+  model.add(BatchNormalization())
+  model.add(Activation(activation = 'relu'))
+  model.add(Convolution3D(60, (2, 2, 2))) 
+  model.add(BatchNormalization())
+  model.add(Activation(activation = 'relu'))
+  model.add(Flatten()) # now our layers have been combined to one
+  model.add(Dense(50)) # 300 nodes in the last hidden layer
+  model.add(BatchNormalization())
+  model.add(Activation(activation = 'relu'))
+  model.add(Dense(20, activation = 'softmax')) # output layer has 20 possible classes (amino acids 0 - 19)
+  
+  if GPUS >= 2:
+    model = multi_gpu_model(model, gpus=GPUS)
+
+  return model
+
+def model_29(GPUS = 1, box_size = 9):
+  """ one dense: 100 """
+  model = Sequential()
+  model.add(Convolution3D(60, kernel_size = (3, 3, 3), strides = (1, 1, 1), input_shape = (box_size, box_size, box_size, 20))) # 32 output nodes, kernel_size is your moving window, activation function, input shape = auto calculated
+  model.add(BatchNormalization())
+  model.add(Activation(activation = 'relu'))
+  model.add(Convolution3D(60, (2, 2, 2))) 
+  model.add(BatchNormalization())
+  model.add(Activation(activation = 'relu'))
+  model.add(Convolution3D(60, (2, 2, 2))) 
+  model.add(BatchNormalization())
+  model.add(Activation(activation = 'relu'))
+  model.add(Flatten()) # now our layers have been combined to one
+  model.add(Dense(100)) # 300 nodes in the last hidden layer
+  model.add(BatchNormalization())
+  model.add(Activation(activation = 'relu'))
+  model.add(Dense(20, activation = 'softmax')) # output layer has 20 possible classes (amino acids 0 - 19)
+  
+  if GPUS >= 2:
+    model = multi_gpu_model(model, gpus=GPUS)
+
+  return model
+
+def model_30(GPUS = 1, box_size = 9):
+  """ one dense: 1000 """
+  model = Sequential()
+  model.add(Convolution3D(60, kernel_size = (3, 3, 3), strides = (1, 1, 1), input_shape = (box_size, box_size, box_size, 20))) # 32 output nodes, kernel_size is your moving window, activation function, input shape = auto calculated
+  model.add(BatchNormalization())
+  model.add(Activation(activation = 'relu'))
+  model.add(Convolution3D(60, (2, 2, 2))) 
+  model.add(BatchNormalization())
+  model.add(Activation(activation = 'relu'))
+  model.add(Convolution3D(60, (2, 2, 2))) 
+  model.add(BatchNormalization())
+  model.add(Activation(activation = 'relu'))
+  model.add(Flatten()) # now our layers have been combined to one
+  model.add(Dense(1000)) # 300 nodes in the last hidden layer
+  model.add(BatchNormalization())
+  model.add(Activation(activation = 'relu'))
+  model.add(Dense(20, activation = 'softmax')) # output layer has 20 possible classes (amino acids 0 - 19)
+  
+  if GPUS >= 2:
+    model = multi_gpu_model(model, gpus=GPUS)
+
+  return model

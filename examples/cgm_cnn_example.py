@@ -56,7 +56,7 @@ metrics = ['accuracy']
 # Training, testing and saving the cnn:
 #========================================================================================================
 
-### loading data
+### loading traianing and validation data
 print("\nStarting to load training data:", timestamp())
 x_train, y_train = get_box_list(training_path) # preparing training data (boxes, centers)
 print("Finished loading training data:", timestamp())
@@ -66,20 +66,29 @@ print("Finished loading validation data:", timestamp())
 ### compiling the model 
 model = my_models[model_id](GPUS, BOX_SIZE)
 model.compile(loss = loss, optimizer = optimizer, metrics = metrics)
-print("Model compiled, starting to train:", timestamp(), "\n")
+print("Model compiled:", timestamp(), "\n")
 
 ### checkpoint
 model_name = "../output/model_" + model_id + ".h5"
 checkpoint = ModelCheckpoint(model_name, monitor='loss', verbose=1, save_best_only=True)
 callbacks_list = [checkpoint]
+print("Checkpoint created, starting to train:", timestamp(), "\n")
 
 ### training and validation
 history = train_model(model, callbacks_list, BATCH_SIZE, EPOCHS, ROTATIONS, BLUR, center_prob, x_train, y_train, x_val, y_val, BOX_SIZE)
+print("Finished training and validation:", timestamp(), "\n")
 
-### saving model
+### saving current model
 timestr = time.strftime("%Y%m%d-%H%M%S")
 model_name = "../output/model_" + model_id + "_" + timestr + ".h5"
 model.save(model_name)
+print("Saved current model:", timestamp(), "\n")
+
+### saving validation predictions
+print("Starting to predict:", timestamp(), "\n")
+predictions = model.predict(x_val, verbose=1)
+np.save("../output/predictions_model_" + str(model_id) + ".npy", predictions)
+print("Finished predicting:", timestamp(), "\n")
  
 ### testing
 print("Finished training, loading test data:", timestamp())
@@ -87,11 +96,6 @@ x_test, y_test = get_test_data(testing_path_x, testing_path_y, BOX_SIZE)
 print("Finished loading test data, testing:", timestamp())
 score = get_testing_results(model, BATCH_SIZE, x_test, y_test)
 print("Finished testing:", timestamp(), "\n")
-
-### saving validation predictions
-predictions = model.predict(x_test, verbose=1)
-np.save("../output/predictions_model_" + str(model_id) + ".npy", predictions)
-print("Finished predicting:", timestamp(), "\n")
 
 ### results
 get_plots(history, model_id, BLUR, loss, optimizer, learning_rate, training_path[3:-1])

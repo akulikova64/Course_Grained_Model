@@ -72,7 +72,7 @@ print("Model compiled:", timestamp(), "\n")
 model_name = "../output/model_" + model_id + ".h5"
 checkpoint = ModelCheckpoint(model_name, monitor='loss', verbose=1, save_best_only=True)
 callbacks_list = [checkpoint]
-print("Checkpoint created, starting to train:", timestamp(), "\n")
+print("Checkpoint file created, starting to train:", timestamp(), "\n")
 
 ### training and validation
 history = train_model(model, callbacks_list, BATCH_SIZE, EPOCHS, ROTATIONS, BLUR, center_prob, x_train, y_train, x_val, y_val, BOX_SIZE)

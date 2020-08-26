@@ -3,6 +3,7 @@ import sys
 import numpy as np
 
 # This program subsets data lists into training, testing and validation 
+# and normalizes the aa class counts for both the testing and validation datasets
 
 # To run this script, you need:
 #   1) a "pdb_all.list" file with 4-chracter names of all proteins in "/boxes" folder
@@ -63,6 +64,22 @@ def normalize_classes(list, path):
   np.save(path + "boxes_normalized.npy", np.asarray(new_boxes)) # add number to the protein and give matching number to the aa list
   np.save(path + "centers_normalized.npy", np.asarray(new_centers))
 
+def get_training_list(list, path):
+  """ combines all training preboxes into a single file """
+
+  boxes_list = []
+  centers_list = []
+
+  for pdb in list:
+    centers = np.load(path + "centers_" + pdb + ".npy", allow_pickle = True)
+    boxes = np.load(path + "boxes_" + pdb + ".npy", allow_pickle = True)
+    for aa, box in zip(centers, boxes): #aa is the number encoding the amino acid
+      centers_list.append(aa)
+      boxes_list.append(box)
+
+  np.save(path + "boxes_train.npy", np.asarray(boxes_list)) # add number to the protein and give matching number to the aa list
+  np.save(path + "centers_train.npy", np.asarray(centers_list))
+
 # ---------- main ----------
 pdb_id_list = open("../pdb_all.list", "r")
 
@@ -82,6 +99,9 @@ val_list = move_boxes(box_path, val_path, pdb_id_list)
 # normalizing the test and validation datasets
 normalize_classes(test_list, test_path)
 normalize_classes(val_list, val_path)
+
+# combining the remaining training preboxes into one file
+get_training_list(pdb_id_list, box_path)
 
 
 

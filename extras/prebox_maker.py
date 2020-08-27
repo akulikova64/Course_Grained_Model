@@ -8,9 +8,9 @@ import os
 import sys
 
 # Global variables:
-BOX_SIZE = 55 # length in A of a box dimension
+BOX_SIZE = 63 # length in A of a box dimension
 DELTA = BOX_SIZE/2
-VOXEL_SIZE = 5 # bin length in A ex 
+VOXEL_SIZE = 7 # bin length in A 
 VOXELS = int(BOX_SIZE/VOXEL_SIZE)
  
 def process_residue(residue):
@@ -82,7 +82,7 @@ def process_residue(residue):
     return output_dict
 
 def get_residues_df(pdb_id):
-  pdb_file = '../PDB/' + pdb_id + '_final_tot.pdb'
+  pdb_file = '../PDB/' + pdb_id + '.pdb' # '_final_tot.pdb'
   structure = PDBParser().get_structure(pdb_id, pdb_file)
   
   atoms = structure.get_atoms()
@@ -129,9 +129,6 @@ def fill_box(i_center, SCcenter_coords, seq):
         aa = seq[i]
         aa_ind = aa_dict[aa]
 
-        """ if box[xyz_ind[0]][xyz_ind[1]][xyz_ind[2]][aa_ind] == 1:
-          print("same amino acids in one voxel, index: " + str(i) + ", aa: " + str(aa)) """ 
-
         if i_center == i:
           continue
         else:
@@ -142,11 +139,12 @@ def fill_box(i_center, SCcenter_coords, seq):
 #========================================================================================
 # MAIN program below
 #========================================================================================
-
 path = "../PDB/"
+destination_path = "../boxes/"
+
 fileList = os.listdir(path)
 for file in fileList:
-  pdb_id = file[0:4] # "1b4t"
+  pdb_id = file[0:4] # ex:"1b4t"
   try:
     residues_df = get_residues_df(pdb_id)
   except TypeError:
@@ -176,8 +174,8 @@ for file in fileList:
     box_list.append(new_box)
 
 
-  np.save("../boxes_2/boxes_" + pdb_id + ".npy", np.asarray(box_list)) # add number to the protein and give matching number to the aa list
-  np.save("../boxes_2/centers_" + pdb_id + ".npy", np.asarray(center_aa_list))
+  np.save(destination_path + "boxes_" + pdb_id + ".npy", np.asarray(box_list)) # add number to the protein and give matching number to the aa list
+  np.save(destination_path + "centers_" + pdb_id + ".npy", np.asarray(center_aa_list))
 
 
 # maverick2 ssh: achern64@maverick2.tacc.utexas.edu

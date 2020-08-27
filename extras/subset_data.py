@@ -10,17 +10,17 @@ import numpy as np
 #   2) "/boxes" folder with generated boxes and centers from prebox_maker.py
 #   3) empty "/testing" and "/validation" folders
 
-N_TEST = 4
+N_TEST_VAL = 4
 
-def move_boxes(box_path, new_path, pdb_id_list):
-  """ moves the first "N_TEST" number of boxes from the training folder to a new folder """
+def move_boxes(box_path, new_path, pdb_list):
+  """ moves the first "N_TEST_VAL" number of boxes from the training folder to a new folder """
 
-  global N_TEST
+  global N_TEST_VAL
   
   # moves N_TEST number of boxes to a new path
   moved_files = []
-  for i, line in enumerate(pdb_id_list):
-    if i >= N_TEST:
+  for i, line in enumerate(pdb_list):
+    if i >= N_TEST_VAL:
       break
     pdb_id = line[0:4]
   
@@ -29,9 +29,9 @@ def move_boxes(box_path, new_path, pdb_id_list):
   
     moved_files.append(pdb_id)
 
-  del pdb_id_list[0:4]
+  del pdb_list[0:4]
 
-  return moved_files
+  return moved_files, pdb_list
   
 def normalize_classes(list, path): 
   """ makes sure each aa appears an equal number of times for both the testing and validation sets """
@@ -82,26 +82,28 @@ def get_training_list(list, path):
 
 # ---------- main ----------
 pdb_id_list = open("../pdb_all.list", "r")
+pdb_list = []
 
-'''
 for line in pdb_id_list:
-  PDB_LIST.append(line[0:4])
-pdb_id_list.close()'''
+  pdb_list.append(line[0:4])
+pdb_id_list.close()
 
 box_path = '../boxes/'
 val_path = '../validation/'
 test_path = '../testing/'
 
 # subsetting boxes to the testing or validation folders
-test_list = move_boxes(box_path, test_path, pdb_id_list)
-val_list = move_boxes(box_path, val_path, pdb_id_list)
+test_list, pdb_list = move_boxes(box_path, test_path, pdb_list)
+val_list, pdb_list = move_boxes(box_path, val_path, pdb_list)
 
 # normalizing the test and validation datasets
 normalize_classes(test_list, test_path)
 normalize_classes(val_list, val_path)
 
 # combining the remaining training preboxes into one file
-get_training_list(pdb_id_list, box_path)
+get_training_list(pdb_list, box_path)
+
+print("Finished subsetting data.")
 
 
 

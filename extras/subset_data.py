@@ -33,7 +33,7 @@ def move_boxes(box_path, new_path, pdb_list):
 
   return moved_files, pdb_list
   
-def normalize_classes(list, path): 
+def normalize_aa_classes(list, path): 
   """ makes sure each aa appears an equal number of times for both the testing and validation sets """
 
   # counts the number of aa per class (20 classes)
@@ -97,8 +97,8 @@ test_list, pdb_list = move_boxes(box_path, test_path, pdb_list)
 val_list, pdb_list = move_boxes(box_path, val_path, pdb_list)
 
 # normalizing the test and validation datasets
-normalize_classes(test_list, test_path)
-normalize_classes(val_list, val_path)
+normalize_aa_classes(test_list, test_path)
+normalize_aa_classes(val_list, val_path)
 
 # combining the remaining training preboxes into one file
 get_training_list(pdb_list, box_path)

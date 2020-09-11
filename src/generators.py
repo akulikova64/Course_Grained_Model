@@ -11,30 +11,13 @@ except ImportError:
 
 # data generators:
 
-# generator for validation data
-def test_val_dataGenerator(pre_boxes, center_aa_list, batch_size, BLUR, center_prob, box_size):
-  """ data generator for testing and validation in batches data without rotations """
-  while True:
-    for i in range(0, len(pre_boxes) - batch_size, batch_size):
-      box_list = []
-      center_list = []
-      for j in range(i, i + batch_size): 
-        if BLUR == False:
-          box = make_one_box(pre_boxes[j], box_size)
-        else:
-          box = make_blurred_box(pre_boxes[j], center_prob, box_size)
-        
-        box_list.append(box)
-        center_list.append(center_aa_list[j])
-
-      yield np.asarray(box_list), to_categorical(center_list, 20)
-
 # generator for training data
 def train_dataGenerator(pre_boxes, center_aa_list, batch_size, rotations, BLUR, center_prob, box_size):
-  """ generates data for training in batches with rotations """
-  zip_lists = list(zip(pre_boxes, center_aa_list))
+  """ generates data for training in batches with rotations and shuffling """
+  print("training generator started")
+  zip_lists = list(zip(pre_boxes, center_aa_list)) # first, zipping the two list to synchronize them by index
   random.shuffle(zip_lists)
-  pre_boxes, center_aa_list = list(zip(*zip_lists))
+  pre_boxes, center_aa_list = list(zip(*zip_lists)) # unzipping after shuffling
 
   while True:
     batch_fraction = int(batch_size/rotations)
@@ -52,3 +35,39 @@ def train_dataGenerator(pre_boxes, center_aa_list, batch_size, rotations, BLUR, 
           center_list.append(center_aa_list[j])
 
       yield np.asarray(box_list), to_categorical(center_list, 20)
+
+# generator for testing and validation data
+def test_val_dataGenerator(pre_boxes, center_aa_list, batch_size, BLUR, center_prob, box_size):
+  """ data generator for testing and validation in batches (does not rotate data)"""
+  print("validation/test generator started")
+  while True:
+    for i in range(0, len(pre_boxes) - batch_size, batch_size):
+      box_list = []
+      center_list = []
+      for j in range(i, i + batch_size): 
+        if BLUR == False:
+          box = make_one_box(pre_boxes[j], box_size)
+        else:
+          box = make_blurred_box(pre_boxes[j], center_prob, box_size)
+        
+        box_list.append(box)
+        center_list.append(center_aa_list[j])
+
+      yield np.asarray(box_list), to_categorical(center_list, 20)
+
+# generator for prediction
+def predict_dataGenerator(pre_boxes, batch_size, BLUR, center_prob, box_size):
+  """ data generator for testing and validation in batches (does not rotate data)"""
+  print("prediction generator started")
+  while True:
+    for i in range(0, len(pre_boxes) - batch_size, batch_size):
+      box_list = []
+      for j in range(i, i + batch_size): 
+        if BLUR == False:
+          box = make_one_box(pre_boxes[j], box_size)
+        else:
+          box = make_blurred_box(pre_boxes[j], center_prob, box_size)
+        
+        box_list.append(box)
+
+      yield np.asarray(box_list)

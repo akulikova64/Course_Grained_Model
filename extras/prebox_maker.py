@@ -167,7 +167,7 @@ for file in fileList:
 
   # creating, filling and appending 4D box arrays to list
   box_list = []
-  center_aa_list = []
+  center_aa_list = [] # global variable. Appended to in fill_box()
 
   for center_aa_index in sample:
     new_box = fill_box(center_aa_index, SCcenter_coords, seq)

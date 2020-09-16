@@ -77,6 +77,10 @@ def get_training_list(list, path):
       centers_list.append(aa)
       boxes_list.append(box)
 
+  print("-------------------------------------------")
+  print("Total number of boxes: ", len(boxes_list))
+  print("-------------------------------------------")
+
   np.save(path + "boxes_train.npy", np.asarray(boxes_list)) # add number to the protein and give matching number to the aa list
   np.save(path + "centers_train.npy", np.asarray(centers_list))
 

@@ -82,7 +82,7 @@ def process_residue(residue):
     return output_dict
 
 def get_residues_df(pdb_id):
-  pdb_file = '../PDB/' + pdb_id + '.pdb' # '_final_tot.pdb'
+  pdb_file = '../PDB/' + pdb_id + '_final_tot.pdb'
   structure = PDBParser().get_structure(pdb_id, pdb_file)
   
   atoms = structure.get_atoms()
@@ -148,7 +148,13 @@ for file in fileList:
   try:
     residues_df = get_residues_df(pdb_id)
   except TypeError:
-    print(pdb_id)
+    print("TypeError: ", pdb_id)
+    continue
+  except ValueError:
+    print("ValueError: ", pdb_id)
+    continue
+  except:
+    print("Error in PDB file: ", pdb_id)
     continue
 
   #pdb_id = sys.argv[1]

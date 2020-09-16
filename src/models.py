@@ -626,7 +626,7 @@ def model_28(GPUS = 1, box_size = 9):
   return model
 
 def model_29(GPUS = 1, box_size = 9):
-  """ one dense: 100 """
+  """ one dense: 100 nodes"""
   model = Sequential()
   model.add(Convolution3D(60, kernel_size = (3, 3, 3), strides = (1, 1, 1), input_shape = (box_size, box_size, box_size, 20))) # 32 output nodes, kernel_size is your moving window, activation function, input shape = auto calculated
   model.add(BatchNormalization())

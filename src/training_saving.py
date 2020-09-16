@@ -14,6 +14,8 @@ try:
   from keras.models import load_model
   from keras.utils import multi_gpu_model
   from keras.utils import to_categorical
+  from keras.callbacks import ModelCheckpoint
+  from keras.callbacks import CSVLogger
 
 except ImportError:
   import tensorflow
@@ -25,6 +27,12 @@ except ImportError:
   from tensorflow.keras.models import load_model
   from tensorflow.keras.utils import multi_gpu_model
   from tensorflow.keras.utils import to_categorical
+  from tensorflow.keras.callbacks import ModelCheckpoint
+  from tensorflow.keras.callbacks import SCBLogger
+
+from datetime import datetime
+def timestamp():
+  return str(datetime.now().time())
 
 # Training and testing
 # global dict for decoding amino acid centers:
@@ -67,42 +75,52 @@ def normalize_classes(centers):
     
   return class_weights
 
-# training the model
-def train_model(model, model_path, callbacks_list, batch_size, epochs, rotations, BLUR, center_prob, x_train, y_train, x_val, y_val, box_size):
+def save_checkpoint(model_id, run):
+  """ saves checkpoint in case of interruption """
+
+  checkpoint_path = "../output/model_" + model_id + "_run_" + str(run) + ".h5"
+  checkpoint = ModelCheckpoint(checkpoint_path, monitor='val_acc', mode='max', save_best_only=False)
+  print("Checkpoint file created:", timestamp(), "\n")
+
+  return checkpoint
+
+def save_csv_logger(model_id):
+  """ saves epoch history as CSV file """
+
+  csv_logger_path = "../output/model_" + model_id + "_history_log.csv"
+  csv_logger = CSVLogger(csv_logger_path, append=True)
+  print("CSV_logger file created/appended to, starting to train:", timestamp(), "\n")
+
+  return csv_logger
+
+def save_model(model, model_id, run):
+  """ saves model with weights """
+
+  current_model = "../output/model_" + model_id + "_run_" + str(run) + ".h5"
+  model.save(current_model)
+  print("Saved current model:", timestamp(), "\n")
+
+# training and saving the model
+def train_model(model, model_id, run, batch_size, epochs, rotations, BLUR, center_prob, x_train, y_train, x_val, y_val, box_size):
   """ calling the model to train """
 
   class_weight = normalize_classes(y_train)
+  checkpoint = save_checkpoint(model_id, run)
+  csv_logger = save_csv_logger(model_id)
 
-  history = model.fit_generator(
-            generator = train_dataGenerator(x_train, y_train, batch_size, rotations, BLUR, center_prob, box_size),
-            validation_data = test_val_dataGenerator(x_val, y_val, batch_size, BLUR, center_prob, box_size),
-            validation_steps = len(x_val)/batch_size, 
-            steps_per_epoch = len(x_train)/batch_size, 
-            epochs = epochs, 
-            verbose = 1,
-            class_weight = class_weight
-          )
-  #print("start model load weights\n")
-  #model.load_weights(model_path)
-  return history
+  print("Starting to train:", timestamp(), "\n")
+  model.fit_generator(
+        generator = train_dataGenerator(x_train, y_train, batch_size, rotations, BLUR, center_prob, box_size),
+        validation_data = test_val_dataGenerator(x_val, y_val, batch_size, BLUR, center_prob, box_size),
+        validation_steps = len(x_val)/batch_size, 
+        steps_per_epoch = len(x_train)/batch_size, 
+        epochs = epochs, 
+        verbose = 1,
+        class_weight = class_weight,
+        callbacks = [checkpoint, csv_logger])
+  print("Finished training and validation:", timestamp(), "\n")
+  
+  save_model(model, model_id, run)
+  print("Saved model:", timestamp(), "\n")
 
-# returns testing results
-def get_testing_results(model, box_size, batch_size, BLUR, center_prob, x_test, y_test):
-  """ testing the trained model """
 
-  # figure out how to use the test_val_generator for the testing data
-  '''
-  x_test = []
-  for index_set in x_test_preboxes: # why are we not going through boxes first? Why do we start with index sets?
-    box = make_one_box(index_set, box_size)
-    x_test.append(box)
-
-  x_test = np.asarray(x_test)
-  y_test = to_categorical(y_test_centers, 20)'''
-
-  score = model.evaluate_generator(
-          generator = test_val_dataGenerator(x_test, y_test, batch_size, BLUR, center_prob, box_size), 
-          steps = len(x_test)/batch_size
-          ) 
-
-  return score

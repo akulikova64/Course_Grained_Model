@@ -1,3 +1,4 @@
+from generators import test_val_dataGenerator
 from datetime import datetime
 import numpy as np
 
@@ -55,7 +56,14 @@ print("Finished loading test data, testing:", timestamp())
 score = get_testing_results(model, BOX_SIZE, BATCH_SIZE, BLUR, center_prob, x_test, y_test)
 print("Finished testing:", timestamp(), "\n")
 
-print('--------------------------------------')
+print("Results:\n")
+print('-----------------------------------------------------')
+print('Total number of environments/boxes for testing:)
+print(len(x_test))
+print('-----------------------------------------------------')
+print('Total number of environments/boxes for testing:)
+print(len(x_test)/20)
+print('-----------------------------------------------------')
 print('Test loss:', score[0])
 print('Test accuracy:', score[1])
-print('--------------------------------------')
+print('-----------------------------------------------------')

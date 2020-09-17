@@ -42,9 +42,11 @@ def compile_model(model_id, run, my_models, GPUS, BOX_SIZE, loss, optimizer, met
   last_model = "../output/model_" + model_id + "_run_" + str(run-1) + ".h5"
   try:
     model = load_model(last_model)
+    print("Loaded last model:", last_model)
   except:
     model = my_models[model_id](GPUS, BOX_SIZE)
     model.compile(loss = loss, optimizer = optimizer, metrics = metrics)
+    print("No previous model found. Training as Run 1 (from zero) :")
 
   print("Model loaded/compiled:", timestamp(), "\n")
 
@@ -64,9 +66,6 @@ def load_data(training_path, validation_path):
   return x_train, y_train, x_val, y_val
 
 
-    
-
-  
 #========================================================================================================
 # Setting the variables, parameters and data paths/locations:
 #========================================================================================================
@@ -110,9 +109,10 @@ train_model(model, model_id, run, BATCH_SIZE, EPOCHS, ROTATIONS, BLUR, center_pr
 
 ### generating validation predictions
 get_val_predictions(model, model_id, run, x_val, BATCH_SIZE, BLUR, center_prob, BOX_SIZE)
- 
+
 ### results
 get_plots(run, model_id, BLUR, loss, optimizer, learning_rate, training_path[3:-1])
+
 print("Training completed!")
 
 

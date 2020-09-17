@@ -10,7 +10,7 @@ import numpy as np
 #   2) "/boxes" folder with generated boxes and centers from prebox_maker.py
 #   3) empty "/testing" and "/validation" folders
 
-N_TEST_VAL = 4
+N_TEST_VAL = 400
 
 def move_boxes(box_path, new_path, pdb_list):
   """ moves the first "N_TEST_VAL" number of boxes from the training folder to a new folder """
@@ -29,7 +29,7 @@ def move_boxes(box_path, new_path, pdb_list):
   
     moved_files.append(pdb_id)
 
-  del pdb_list[0:4]
+  del pdb_list[0:N_TEST_VAL]
 
   return moved_files, pdb_list
   

@@ -28,7 +28,7 @@ except ImportError:
   from tensorflow.keras.utils import multi_gpu_model
   from tensorflow.keras.utils import to_categorical
   from tensorflow.keras.callbacks import ModelCheckpoint
-  from tensorflow.keras.callbacks import SCBLogger
+  from tensorflow.keras.callbacks import CSVLogger
 
 from datetime import datetime
 def timestamp():
@@ -89,7 +89,7 @@ def save_csv_logger(model_id):
 
   csv_logger_path = "../output/model_" + model_id + "_history_log.csv"
   csv_logger = CSVLogger(csv_logger_path, append=True)
-  print("CSV_logger file created/appended to, starting to train:", timestamp(), "\n")
+  print("History CSV file loaded and ready, starting to train:", timestamp(), "\n")
 
   return csv_logger
 
@@ -122,5 +122,6 @@ def train_model(model, model_id, run, batch_size, epochs, rotations, BLUR, cente
   
   save_model(model, model_id, run)
   print("Saved model:", timestamp(), "\n")
+  print(model.summary(), "\n")
 
 

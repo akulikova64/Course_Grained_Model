@@ -5,8 +5,8 @@ import csv
 # decodes the predictions during testing
 
 # loading data
-wt_array = np.load("../testing_2/centers_test.npy", allow_pickle = True)
-pred_array = np.load("../output/26.npy", allow_pickle = True)
+wt_array = np.load("../data/input/testing_2/centers_test.npy", allow_pickle = True)
+pred_array = np.load("../data/output/training_results/26.npy", allow_pickle = True)
 
 # dictionary that decodes the 20 amino acids
 aa_dict = {0:'H', 1:'E', 2:'D', 3:'R', 4:'K', 5:'S', 6:'T', 7:'N', 8:'Q', 9:'A', 10:'V', 11:'L', 12:'I', 13:'M', 14:'F', 15:'Y', 16:'W', 17:'P', 18:'G', 19:'C'}
@@ -29,7 +29,7 @@ for pred in pred_array:
 
 # saving data in a CSV file
 model_id = "26"
-path = "../output/predictions_model_" + model_id + ".csv"
+path = "../data/output/training_results/val_predictions_model_" + model_id + ".csv"
 
 with open(path, 'w', newline='') as file:
     writer = csv.writer(file)

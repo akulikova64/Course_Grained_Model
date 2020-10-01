@@ -41,8 +41,8 @@ BLUR = False
 center_prob = 0.44 if BLUR else 1 # probability of amino acid in center voxel
 
 # data path
-testing_path = "../testing/"
-model_path = "../output/model_30_20200909-234817.h5"
+testing_path = "../data/input/testing/"
+model_path = "../data/output/training_results/model_30_20200909-234817.h5"
 
 ### loading trained model
 model = load_model(model_path)

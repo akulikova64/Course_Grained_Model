@@ -1,7 +1,8 @@
 import numpy as np
 import collections
-from generators import train_dataGenerator
-from generators import test_val_dataGenerator
+import math
+from generators import dataGenerator_rot
+from generators import dataGenerator_no_rot
 from box_maker import make_one_box
 
 try:
@@ -75,52 +76,59 @@ def normalize_classes(centers):
     
   return class_weights
 
-def save_checkpoint(model_id, run):
+def save_checkpoint(model_id, run, output_path):
   """ saves checkpoint in case of interruption """
 
-  checkpoint_path = "../output/model_" + model_id + "_run_" + str(run) + ".h5"
+  checkpoint_path = output_path + "/model_" + model_id + "_run_" + str(run) + ".h5"
   checkpoint = ModelCheckpoint(checkpoint_path, monitor='val_acc', mode='max', save_best_only=False)
   print("Checkpoint file created:", timestamp(), "\n")
 
   return checkpoint
 
-def save_csv_logger(model_id):
+def save_csv_logger(model_id, output_path):
   """ saves epoch history as CSV file """
 
-  csv_logger_path = "../output/model_" + model_id + "_history_log.csv"
+  csv_logger_path = output_path + "/model_" + model_id + "_history_log.csv"
   csv_logger = CSVLogger(csv_logger_path, append=True)
   print("History CSV file loaded and ready, starting to train:", timestamp(), "\n")
 
   return csv_logger
 
-def save_model(model, model_id, run):
+def save_model(model, model_id, run, output_path):
   """ saves model with weights """
 
-  current_model = "../output/model_" + model_id + "_run_" + str(run) + ".h5"
+  current_model = output_path + "/model_" + model_id + "_run_" + str(run) + ".h5"
   model.save(current_model)
   print("Saved current model:", timestamp(), "\n")
 
 # training and saving the model
-def train_model(model, model_id, run, batch_size, epochs, rotations, BLUR, center_prob, x_train, y_train, x_val, y_val, box_size):
+def train_model(model, model_id, run, batch_size, epochs, rotations, BLUR, center_prob, x_train, y_train, x_val, y_val, box_size, output_path):
   """ calling the model to train """
 
   class_weight = normalize_classes(y_train)
-  checkpoint = save_checkpoint(model_id, run)
-  csv_logger = save_csv_logger(model_id)
+  checkpoint = save_checkpoint(model_id, run, output_path)
+  csv_logger = save_csv_logger(model_id, output_path)
+
+  if rotations > 0:
+    generator = dataGenerator_rot(x_train, y_train, batch_size, rotations, BLUR, center_prob, box_size)
+    steps_per_epoch = math.ceil(len(x_train)/(batch_size/rotations))
+  else:
+    generator = dataGenerator_no_rot(x_train, y_train, batch_size, BLUR, center_prob, box_size)
+    steps_per_epoch = math.ceil(len(x_train)/batch_size)
 
   print("Starting to train:", timestamp(), "\n")
   model.fit_generator(
-        generator = train_dataGenerator(x_train, y_train, batch_size, rotations, BLUR, center_prob, box_size),
-        validation_data = test_val_dataGenerator(x_val, y_val, batch_size, BLUR, center_prob, box_size),
-        validation_steps = len(x_val)/batch_size, 
-        steps_per_epoch = len(x_train)/batch_size, 
+        generator = generator,
+        validation_data = dataGenerator_no_rot(x_val, y_val, batch_size, BLUR, center_prob, box_size),
+        validation_steps = math.ceil(len(x_val)/batch_size), 
+        steps_per_epoch = steps_per_epoch, 
         epochs = epochs, 
         verbose = 1,
         class_weight = class_weight,
         callbacks = [checkpoint, csv_logger])
   print("Finished training and validation:", timestamp(), "\n")
   
-  save_model(model, model_id, run)
+  save_model(model, model_id, run, output_path)
   print("Saved model:", timestamp(), "\n")
   print(model.summary(), "\n")
 

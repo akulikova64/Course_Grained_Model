@@ -9,12 +9,12 @@ import time
 def timestamp():
   return str(datetime.now().time())
 
-def get_history(model_id):
+def get_history(model_id, output_path):
   """ parces the history CSV file """ 
 
   accuracy, loss, val_accuracy, val_loss = [], [], [], []
 
-  with open("../output/model_" + str(model_id) + "_history_log.csv") as hist_file:
+  with open(output_path + "/model_" + str(model_id) + "_history_log.csv") as hist_file:
     csv_reader = csv.DictReader(hist_file, delimiter=',')
     for row_values in csv_reader:
       accuracy.append(float(row_values['accuracy']))
@@ -25,18 +25,19 @@ def get_history(model_id):
   return accuracy, loss, val_accuracy, val_loss
 
 #graphing the accuracy and loss for both the training and test data
-def get_plots(run, model_id, BLUR, loss, optimizer, learning_rate, data):
+def get_plots(run, model_id, BLUR, loss, optimizer, learning_rate, data, output_path, rotations):
   """ creates simple plots of accuracy and loss for training and validation """
 
   parameter_text = "BLUR = " + str(BLUR) + "\n" + \
                    "loss = " + str(loss) + "\n" \
                    "optimizer = " + str(optimizer)[18:28] + ". \n" \
                    "learning rate = " + str(learning_rate) + "\n" \
-                   "training data = " + str(data)
+                   "training data = " + str(data) + "\n" \
+                   "rotations = " + str(rotations) 
 
   timestr = time.strftime("%m%d-%H%M%S")
 
-  accuracy, loss, val_accuracy, val_loss = get_history(model_id)
+  accuracy, loss, val_accuracy, val_loss = get_history(model_id, output_path)
 
   print("Making plots: ", timestamp(), "\n")
 
@@ -68,7 +69,7 @@ def get_plots(run, model_id, BLUR, loss, optimizer, learning_rate, data):
   print("Starting to write CSV file:", timestamp())
   with open(path, 'w', newline='') as file:
     writer = csv.writer(file)
-    writer.writerow(["Model_ID", "Epoch", "BLUR", "learning_rate", "Acc_train", "Acc_val", "Loss_train", "Loss_val"])
+    writer.writerow(["Model_ID", "Epoch", "BLUR", "learning_rate", "rotations", "Acc_train", "Acc_val", "Loss_train", "Loss_val"])
     for i in range(0, len(accuracy)):
-      writer.writerow([model_id, i+1, BLUR, learning_rate, accuracy[i], val_accuracy[i], loss[i], val_loss[i]])
+      writer.writerow([model_id, i+1, BLUR, learning_rate, rotations, accuracy[i], val_accuracy[i], loss[i], val_loss[i]])
   print("Finished writing CSV file:", timestamp())

@@ -670,3 +670,90 @@ def model_30(GPUS = 1, box_size = 9):
     model = multi_gpu_model(model, gpus=GPUS)
 
   return model
+
+def model_31(GPUS = 1, box_size = 9):
+  """ model with minimal convolutions """
+  model = Sequential()
+  model.add(Convolution3D(500, kernel_size = (2, 2, 2), strides = (1, 1, 1), input_shape = (box_size, box_size, box_size, 20))) # 32 output nodes, kernel_size is your moving window, activation function, input shape = auto calculated
+  model.add(BatchNormalization())
+  model.add(Activation(activation = 'relu'))
+  model.add(Flatten()) # now our layers have been combined to one
+  model.add(Dense(1000)) # 300 nodes in the last hidden layer
+  model.add(BatchNormalization())
+  model.add(Activation(activation = 'relu'))
+  model.add(Dense(500)) # 300 nodes in the last hidden layer
+  model.add(BatchNormalization())
+  model.add(Activation(activation = 'relu'))
+  model.add(Dense(500)) # 300 nodes in the last hidden layer
+  model.add(BatchNormalization())
+  model.add(Activation(activation = 'relu'))
+  model.add(Dense(20, activation = 'softmax')) # output layer has 20 possible classes (amino acids 0 - 19)
+  
+  if GPUS >= 2:
+    model = multi_gpu_model(model, gpus=GPUS)
+
+  return model
+
+def model_32(GPUS = 1, box_size = 3):
+  """ model for a small 3x3x3 box, no conv """
+  model = Sequential()
+  model.add(Flatten()) # now our layers have been combined to one
+  model.add(Dense(500)) # 300 nodes in the last hidden layer
+  model.add(BatchNormalization())
+  model.add(Activation(activation = 'relu'))
+  model.add(Dense(500)) # 300 nodes in the last hidden layer
+  model.add(BatchNormalization())
+  model.add(Activation(activation = 'relu'))
+  model.add(Dense(500)) # 300 nodes in the last hidden layer
+  model.add(BatchNormalization())
+  model.add(Activation(activation = 'relu'))
+  model.add(Dense(20, activation = 'softmax')) # output layer has 20 possible classes (amino acids 0 - 19)
+  
+  if GPUS >= 2:
+    model = multi_gpu_model(model, gpus=GPUS)
+
+  return model
+
+def model_33(GPUS = 1, box_size = 9):
+  """ model with no convolutions """
+  model = Sequential()
+  model.add(Flatten()) 
+  model.add(Dense(1000)) # 300 nodes in the last hidden layer
+  model.add(BatchNormalization())
+  model.add(Activation(activation = 'relu'))
+  model.add(Dense(500)) # 300 nodes in the last hidden layer
+  model.add(BatchNormalization())
+  model.add(Activation(activation = 'relu'))
+  model.add(Dense(500)) # 300 nodes in the last hidden layer
+  model.add(BatchNormalization())
+  model.add(Activation(activation = 'relu'))
+  model.add(Dense(20, activation = 'softmax')) # output layer has 20 possible classes (amino acids 0 - 19)
+  
+  if GPUS >= 2:
+    model = multi_gpu_model(model, gpus=GPUS)
+
+  return model
+
+def model_34(GPUS = 1, box_size = 3):
+  """ model for a small 3x3x3 box with conv """
+  model = Sequential()
+  model.add(Convolution3D(500, kernel_size = (2, 2, 2), strides = (1, 1, 1), input_shape = (box_size, box_size, box_size, 20))) # 32 output nodes, kernel_size is your moving window, activation function, input shape = auto calculated
+  model.add(BatchNormalization())
+  model.add(Activation(activation = 'relu'))
+  model.add(Flatten()) # now our layers have been combined to one
+  model.add(Dense(500)) # 300 nodes in the last hidden layer
+  model.add(BatchNormalization())
+  model.add(Activation(activation = 'relu'))
+  model.add(Dense(500)) # 300 nodes in the last hidden layer
+  model.add(BatchNormalization())
+  model.add(Activation(activation = 'relu'))
+  model.add(Dense(500)) # 300 nodes in the last hidden layer
+  model.add(BatchNormalization())
+  model.add(Activation(activation = 'relu'))
+  model.add(Dense(20, activation = 'softmax')) # output layer has 20 possible classes (amino acids 0 - 19)
+  
+  if GPUS >= 2:
+    model = multi_gpu_model(model, gpus=GPUS)
+
+  return model
+

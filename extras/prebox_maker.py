@@ -8,7 +8,7 @@ import os
 import sys
 
 # Global variables:
-BOX_SIZE = 63 # length in A of a box dimension
+BOX_SIZE = 21 # length in A of a box dimension
 DELTA = BOX_SIZE/2
 VOXEL_SIZE = 7 # bin length in A 
 VOXELS = int(BOX_SIZE/VOXEL_SIZE)
@@ -77,12 +77,12 @@ def process_residue(residue):
             return 'Error'
         
     # Calculate side chain geometric center
-    output_dict['SCcenter_coords'] = sum(sidechain_coords)/                                      len(sidechain_coords)
+    output_dict['SCcenter_coords'] = sum(sidechain_coords)/len(sidechain_coords)
     
     return output_dict
 
 def get_residues_df(pdb_id):
-  pdb_file = '../PDB/' + pdb_id + '_final_tot.pdb'
+  pdb_file = '../PDB_38/' + pdb_id + '.pdb'
   structure = PDBParser().get_structure(pdb_id, pdb_file)
   
   atoms = structure.get_atoms()
@@ -117,6 +117,7 @@ def fill_box(i_center, SCcenter_coords, seq):
 
   box = []
   global center_aa_list
+  global VOXELS
   center_aa_list.append(aa_dict[seq[i_center]])
   center = SCcenter_coords[i_center]
     
@@ -125,7 +126,7 @@ def fill_box(i_center, SCcenter_coords, seq):
       for j in range (0, 3):
         xyz_ind.append(get_voxel_index(coords[j], center[j]))
       
-      if min(xyz_ind) >= 0 and max(xyz_ind) < 9:
+      if min(xyz_ind) >= 0 and max(xyz_ind) < VOXELS:
         aa = seq[i]
         aa_ind = aa_dict[aa]
 
@@ -139,8 +140,8 @@ def fill_box(i_center, SCcenter_coords, seq):
 #========================================================================================
 # MAIN program below
 #========================================================================================
-path = "../PDB/"
-destination_path = "../boxes/"
+path = "../data/input/PDB_38/"
+destination_path = "../data/input/boxes_small/"
 
 fileList = os.listdir(path)
 for file in fileList:
@@ -153,9 +154,9 @@ for file in fileList:
   except ValueError:
     print("ValueError: ", pdb_id)
     continue
-  except:
-    print("Error in PDB file: ", pdb_id)
-    continue
+  #except:
+    #print("Error in PDB file: ", pdb_id)
+    #continue
 
   #pdb_id = sys.argv[1]
   #residues_df = get_residues_df(pdb_id)

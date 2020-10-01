@@ -20,26 +20,28 @@ from datetime import datetime
 def timestamp():
   return str(datetime.now().time())
 
-def get_current_run():
+def get_current_run(model_id, output_path):
   """ checks output folder for the previous run number and adds one """
 
-  path = "../output/"
+  path = output_path + "/"
   fileList = os.listdir(path)
 
   current_run = 1
   for file in fileList:
-    match = re.search(r'run_([0-9]+).h5', file)
-    if match:
-      run = int(match.group(1))
-      if run >= current_run:
-        current_run = run + 1
+    match_1 = re.search(r'model_' + model_id + '_', file)
+    if match_1:
+      match_2 = re.search(r'run_([0-9]+).h5', file)
+      if match_2:
+        run = int(match_2.group(1))
+        if run >= current_run:
+          current_run = run + 1
 
   return current_run
 
-def compile_model(model_id, run, my_models, GPUS, BOX_SIZE, loss, optimizer, metrics):
+def compile_model(model_id, run, my_models, GPUS, BOX_SIZE, loss, optimizer, metrics, output_path):
   """ loads previous model or compiles a new model """
 
-  last_model = "../output/model_" + model_id + "_run_" + str(run-1) + ".h5"
+  last_model = output_path + "/model_" + model_id + "_run_" + str(run-1) + ".h5"
   try:
     model = load_model(last_model)
     print("Loaded last model:", last_model)
@@ -48,6 +50,8 @@ def compile_model(model_id, run, my_models, GPUS, BOX_SIZE, loss, optimizer, met
     model.compile(loss = loss, optimizer = optimizer, metrics = metrics)
     print("No previous model found. Training as Run 1 (from zero) :")
 
+  print(last_model)
+  print(model)
   print("Model loaded/compiled:", timestamp(), "\n")
 
   return model
@@ -69,29 +73,30 @@ def load_data(training_path, validation_path):
 #========================================================================================================
 # Setting the variables, parameters and data paths/locations:
 #========================================================================================================
+### data paths/locations
+training_path = "../data/input/boxes_small/"
+validation_path = "../data/input/validation_small/"
+output_path = "../data/output/training_results"
 
 ### variables
-EPOCHS = 4 # iterations through the data
-BOX_SIZE = 9 # number of bins in the x,y or z directions
+EPOCHS = 1 # iterations through the data
+BOX_SIZE = 3 # number of bins in the x,y or z directions
 ROTATIONS = 4 # number of box rotations per box
 BATCH_SIZE = 20 # batch_size must be divisible by "ROTATIONS"
 GPUS = 1 # max is 4 GPUs
 BLUR = False
 center_prob = 0.44 if BLUR else 1 # probability of amino acid in center voxel
-model_id = "30"
+model_id = "34"
 learning_rate = 0.0001
-run = get_current_run()
-
-### data paths/locations
-training_path = "../boxes/"
-validation_path = "../validation/"
+run = get_current_run(model_id, output_path)
 
 ### best models:
-my_models = {"27": models.model_27, "28": models.model_28, "29": models.model_29, "30": models.model_30, "12": models.model_12, "13": models.model_13, "14": models.model_14, "15": models.model_15, "20": models.model_20, "21": models.model_21, "22": models.model_22, "23": models.model_23, "24": models.model_24, "25": models.model_25}
+my_models = {"31": models.model_31, "32": models.model_32, "33": models.model_33, "34": models.model_34}
 
 ### setting parameters for training
 loss ='categorical_crossentropy'
 optimizer = Adam(lr = learning_rate)
+metrics = ['accuracy']
 metrics = ['accuracy']
 
 #========================================================================================================
@@ -102,16 +107,16 @@ metrics = ['accuracy']
 x_train, y_train, x_val, y_val = load_data(training_path, validation_path)
 
 ### compiling the model
-model = compile_model(model_id, run, my_models, GPUS, BOX_SIZE, loss, optimizer, metrics)
+model = compile_model(model_id, run, my_models, GPUS, BOX_SIZE, loss, optimizer, metrics, output_path)
 
 ### training and validation
-train_model(model, model_id, run, BATCH_SIZE, EPOCHS, ROTATIONS, BLUR, center_prob, x_train, y_train, x_val, y_val, BOX_SIZE)
+train_model(model, model_id, run, BATCH_SIZE, EPOCHS, ROTATIONS, BLUR, center_prob, x_train, y_train, x_val, y_val, BOX_SIZE, output_path)
 
 ### generating validation predictions
-get_val_predictions(model, model_id, run, x_val, BATCH_SIZE, BLUR, center_prob, BOX_SIZE)
+get_val_predictions(model, model_id, run, x_val, BATCH_SIZE, BLUR, center_prob, BOX_SIZE, output_path)
 
 ### results
-get_plots(run, model_id, BLUR, loss, optimizer, learning_rate, training_path[3:-1])
+get_plots(run, model_id, BLUR, loss, optimizer, learning_rate, training_path[3:-1], output_path, ROTATIONS)
 
 print("Training completed!")
 

@@ -79,7 +79,7 @@ def normalize_classes(centers):
 def save_checkpoint(model_id, run, output_path):
   """ saves checkpoint in case of interruption """
 
-  checkpoint_path = output_path + "/model_" + model_id + "_run_" + str(run) + ".h5"
+  checkpoint_path = output_path + "/model_ckeckpoint" + model_id + "_run_" + str(run) + ".h5"
   checkpoint = ModelCheckpoint(checkpoint_path, monitor='val_acc', mode='max', save_best_only=False)
   print("Checkpoint file created:", timestamp(), "\n")
 
@@ -109,23 +109,37 @@ def train_model(model, model_id, run, batch_size, epochs, rotations, BLUR, cente
   checkpoint = save_checkpoint(model_id, run, output_path)
   csv_logger = save_csv_logger(model_id, output_path)
 
-  if rotations > 0:
-    generator = dataGenerator_rot(x_train, y_train, batch_size, rotations, BLUR, center_prob, box_size)
-    steps_per_epoch = math.ceil(len(x_train)/(batch_size/rotations))
-  else:
-    generator = dataGenerator_no_rot(x_train, y_train, batch_size, BLUR, center_prob, box_size)
-    steps_per_epoch = math.ceil(len(x_train)/batch_size)
-
   print("Starting to train:", timestamp(), "\n")
-  model.fit_generator(
-        generator = generator,
+  
+  if rotations > 0:
+    #steps_per_epoch = math.ceil(len(x_train)/(batch_size/rotations))
+    #validation_steps = math.ceil(len(x_val)/batch_size)
+    a = 4
+    steps_per_epoch = math.ceil(a/rotations)
+    validation_steps = a
+    model.fit_generator(
+        generator = dataGenerator_rot(x_train, y_train, batch_size, rotations, BLUR, center_prob, box_size),
         validation_data = dataGenerator_no_rot(x_val, y_val, batch_size, BLUR, center_prob, box_size),
-        validation_steps = math.ceil(len(x_val)/batch_size), 
+        validation_steps = validation_steps, 
+        steps_per_epoch = steps_per_epoch, 
+        max_queue_size = 0,
+        epochs = epochs, 
+        verbose = 1,
+        class_weight = class_weight,
+        callbacks = [checkpoint, csv_logger])
+  else:
+    steps_per_epoch = math.ceil(len(x_train)/batch_size)
+    validation_steps = math.ceil(len(x_val)/batch_size)
+    model.fit_generator(
+        generator = dataGenerator_no_rot(x_train, y_train, batch_size, BLUR, center_prob, box_size),
+        validation_data = dataGenerator_no_rot(x_val, y_val, batch_size, BLUR, center_prob, box_size),
+        validation_steps = validation_steps, 
         steps_per_epoch = steps_per_epoch, 
         epochs = epochs, 
         verbose = 1,
         class_weight = class_weight,
         callbacks = [checkpoint, csv_logger])
+
   print("Finished training and validation:", timestamp(), "\n")
   
   save_model(model, model_id, run, output_path)

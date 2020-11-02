@@ -50,7 +50,7 @@ def get_plots(run, model_id, BLUR, loss, optimizer, learning_rate, data, output_
   plt.xlabel('epoch')
   plt.legend(['training', 'validation'], loc = 'upper left')
   plt.annotate(parameter_text, xy = (0.28, 0.84), xycoords = 'axes fraction', size = 7) 
-  plt.savefig("../output/Accuracy_model_" + model_id + "_run_" + str(run) + "_" + timestr + ".pdf")
+  plt.savefig(output_path + "/Accuracy_model_" + model_id + "_run_" + str(run) + "_" + timestr + ".pdf")
   plt.clf()
 
   # plotting loss
@@ -62,10 +62,10 @@ def get_plots(run, model_id, BLUR, loss, optimizer, learning_rate, data, output_
   plt.xlabel('epoch')
   plt.legend(['training', 'validaton'], loc = 'upper left')
   plt.annotate(parameter_text, xy = (0.28, 0.84), xycoords = 'axes fraction', size = 7)
-  plt.savefig("../output/loss_model_" + model_id + "_run_" + str(run) + "_" + timestr + ".pdf")
+  plt.savefig(output_path + "/loss_model_" + model_id + "_run_" + str(run) + "_" + timestr + ".pdf")
 
   #saving all data in a CSV file
-  path = "../output/model_" + model_id + "_run_" + str(run) + "_" + timestr + ".csv"
+  path = output_path + "/model_" + model_id + "_run_" + str(run) + "_" + timestr + ".csv"
   print("Starting to write CSV file:", timestamp())
   with open(path, 'w', newline='') as file:
     writer = csv.writer(file)

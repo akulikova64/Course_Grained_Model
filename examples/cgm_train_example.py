@@ -50,8 +50,6 @@ def compile_model(model_id, run, my_models, GPUS, BOX_SIZE, loss, optimizer, met
     model.compile(loss = loss, optimizer = optimizer, metrics = metrics)
     print("No previous model found. Training as Run 1 (from zero) :")
 
-  print(last_model)
-  print(model)
   print("Model loaded/compiled:", timestamp(), "\n")
 
   return model
@@ -67,26 +65,26 @@ def load_data(training_path, validation_path):
   y_val = np.load(validation_path + "centers_normalized.npy", allow_pickle = True).tolist()
   print("Finished loading validation data:", timestamp())
 
-  return x_train, y_train, x_val, y_val
+  return x_train[0:8], y_train[0:8], x_val[0:8], y_val[0:8]
 
 
 #========================================================================================================
 # Setting the variables, parameters and data paths/locations:
 #========================================================================================================
 ### data paths/locations
-training_path = "../data/input/boxes_small/"
-validation_path = "../data/input/validation_small/"
+training_path = "../data/input/boxes/"
+validation_path = "../data/input/validation/"
 output_path = "../data/output/training_results"
 
 ### variables
-EPOCHS = 1 # iterations through the data
-BOX_SIZE = 3 # number of bins in the x,y or z directions
-ROTATIONS = 4 # number of box rotations per box
-BATCH_SIZE = 20 # batch_size must be divisible by "ROTATIONS"
+EPOCHS = 2 # iterations through the data
+BOX_SIZE = 9 # number of bins in the x,y or z directions
+ROTATIONS = 1 # number of box rotations per box
+BATCH_SIZE = 2 # batch_size must be divisible by "ROTATIONS"
 GPUS = 1 # max is 4 GPUs
 BLUR = False
 center_prob = 0.44 if BLUR else 1 # probability of amino acid in center voxel
-model_id = "34"
+model_id = "31"
 learning_rate = 0.0001
 run = get_current_run(model_id, output_path)
 

@@ -7,12 +7,6 @@ import random
 import os
 import sys
 
-# Global variables:
-BOX_SIZE = 21 # length in A of a box dimension
-DELTA = BOX_SIZE/2
-VOXEL_SIZE = 7 # bin length in A 
-VOXELS = int(BOX_SIZE/VOXEL_SIZE)
- 
 def process_residue(residue):
     '''
     Processes a single residue to determine the coordinates of the alpha-carbon
@@ -81,8 +75,8 @@ def process_residue(residue):
     
     return output_dict
 
-def get_residues_df(pdb_id):
-  pdb_file = '../PDB_38/' + pdb_id + '.pdb'
+def get_residues_df(pdb_id, path):
+  pdb_file = path + pdb_id + '.pdb'
   structure = PDBParser().get_structure(pdb_id, pdb_file)
   
   atoms = structure.get_atoms()
@@ -111,7 +105,7 @@ def get_voxel_index(coord, center):
     index = math.floor((coord - minimum)/VOXEL_SIZE)
     return index
 
-def fill_box(i_center, SCcenter_coords, seq):
+def fill_prebox(i_center, SCcenter_coords, seq):
   aa_dict = {'H':0, 'E':1, 'D':2,  'R':3, 'K':4, 'S':5, 'T':6, 'N':7, 'Q':8, 'A':9, \
              'V':10, 'L':11, 'I':12, 'M':13, 'F':14, 'Y':15, 'W':16, 'P':17, 'G':18, 'C':19}
 
@@ -130,7 +124,7 @@ def fill_box(i_center, SCcenter_coords, seq):
         aa = seq[i]
         aa_ind = aa_dict[aa]
 
-        if i_center == i:
+        if i_center == i: # center is skiped. 
           continue
         else:
           box.append([xyz_ind[0], xyz_ind[1], xyz_ind[2], aa_ind]) #[x, y, z, aa index]
@@ -140,14 +134,20 @@ def fill_box(i_center, SCcenter_coords, seq):
 #========================================================================================
 # MAIN program below
 #========================================================================================
+# Global variables:
+BOX_SIZE = 9 # length in A of a box dimension
+DELTA = BOX_SIZE/2
+VOXEL_SIZE = 9 # bin length in A 
+VOXELS = int(BOX_SIZE/VOXEL_SIZE)
+ 
 path = "../data/input/PDB_38/"
-destination_path = "../data/input/boxes_small/"
+destination_path = "../data/input/boxes_s" + str(VOXELS) + "_" + str(VOXEL_SIZE) + "A/"
 
 fileList = os.listdir(path)
 for file in fileList:
   pdb_id = file[0:4] # ex:"1b4t"
   try:
-    residues_df = get_residues_df(pdb_id)
+    residues_df = get_residues_df(pdb_id, path)
   except TypeError:
     print("TypeError: ", pdb_id)
     continue
@@ -176,8 +176,8 @@ for file in fileList:
   box_list = []
   center_aa_list = [] # global variable. Appended to in fill_box()
 
-  for center_aa_index in sample:
-    new_box = fill_box(center_aa_index, SCcenter_coords, seq)
+  for center_aa_index in sample: #center_aa_index is a random position in the protein
+    new_box = fill_prebox(center_aa_index, SCcenter_coords, seq)
     box_list.append(new_box)
 
 
